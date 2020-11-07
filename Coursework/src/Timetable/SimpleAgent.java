@@ -1,3 +1,5 @@
+package Timetable;
+
 import jade.core.Agent;
 
 public class SimpleAgent extends Agent {

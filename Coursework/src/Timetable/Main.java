@@ -1,3 +1,5 @@
+package Timetable;
+
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentController;
