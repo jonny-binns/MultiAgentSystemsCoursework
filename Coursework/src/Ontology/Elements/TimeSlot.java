@@ -8,7 +8,7 @@ package Ontology.Elements;
 import jade.content.Concept;
 import jade.content.onto.annotations.Slot;
 
-public class Timeslot implements Concept{
+public class TimeSlot implements Concept{
 	private int time;
 	private String day;
 	

@@ -8,10 +8,10 @@ package Ontology.Elements;
 import jade.content.Concept;
 import jade.content.onto.annotations.Slot;
 
-public class Tutorial extends Timeslot {
+public class Tutorial extends TimeSlot {
 	private String moduleName;
 	private int groupNumber;
-	private Timeslot timeslot;
+	private TimeSlot timeslot;
 	
 	@Slot (mandatory = true)
 	public String getModuleName() {
@@ -32,11 +32,11 @@ public class Tutorial extends Timeslot {
 	}
 	
 	@Slot (mandatory = true)
-	public Timeslot getTimeSlot() {
+	public TimeSlot getTimeSlot() {
 		return timeslot;
 	}
 	
-	public void setTimeSlot(Timeslot timeslot) {
+	public void setTimeSlot(TimeSlot timeslot) {
 		this.timeslot = timeslot;
 	}
 }

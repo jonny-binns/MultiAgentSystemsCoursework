@@ -6,17 +6,17 @@ import jade.content.onto.Ontology;
 
 public class TimetableOntology extends BeanOntology {
 	
-	private static Ontology Instance = new TimetableOntology("my_ontology");
+	private static Ontology theInstance = new TimetableOntology("my_ontology");
 	
 	public static Ontology getInstance() {
-		return Instance;
+		return theInstance;
 	}
 	
 	//singleton pattern
 	private TimetableOntology(String name) {
 		super(name);
 		try {
-			add("Timetable.Ontology.Elements");
+			add("Ontology.Elements");
 		}
 		catch(BeanOntologyException e){
 			e.printStackTrace();
