@@ -10,7 +10,7 @@ import jade.core.AID;
 
 public class Swap implements AgentAction{
 	private AID swapStudent; //student who is receiving the swap
-	private Tutorial tutorial;
+	private StudentTutorial tutorial;
 	
 	public AID getSwapStudent() {
 		return swapStudent;
@@ -20,11 +20,11 @@ public class Swap implements AgentAction{
 		this.swapStudent = swapStudent;
 	}
 	
-	public Tutorial getTutorial() {
+	public StudentTutorial getTutorial() {
 		return tutorial;
 	}
 	
-	public void setTutorial(Tutorial tutorial) {
+	public void setTutorial(StudentTutorial tutorial) {
 		this.tutorial = tutorial;
 	}
 }

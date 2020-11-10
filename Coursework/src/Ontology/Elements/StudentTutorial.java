@@ -1,6 +1,7 @@
 /**
  * @author jonny
- * represents an individual tutorial, has a time slot (day/time) a module name and a group number
+ * represents an individual tutorial for a student, has a time slot (day/time) a module name and a group number
+ * Doesnt contain the list of attendees as students do not need that info
  */
 
 package Ontology.Elements;
@@ -8,10 +9,9 @@ package Ontology.Elements;
 import jade.content.Concept;
 import jade.content.onto.annotations.Slot;
 
-public class Tutorial extends TimeSlot {
+public class StudentTutorial extends TimeSlot {
 	private String moduleName;
 	private int groupNumber;
-	private TimeSlot timeslot;
 	
 	@Slot (mandatory = true)
 	public String getModuleName() {
@@ -29,14 +29,5 @@ public class Tutorial extends TimeSlot {
 	
 	public void setGroupNumber(int groupNumber) {
 		this.groupNumber = groupNumber;
-	}
-	
-	@Slot (mandatory = true)
-	public TimeSlot getTimeSlot() {
-		return timeslot;
-	}
-	
-	public void setTimeSlot(TimeSlot timeslot) {
-		this.timeslot = timeslot;
 	}
 }

@@ -20,17 +20,17 @@ public class Main {
 		moduleNames.add("Software Architecture");
 		int noOfGroups = 2;
 		
-		ArrayList<Tutorial> classes = InitClasses(moduleNames, noOfGroups);
+		ArrayList<TimetableTutorial> classes = InitClasses(moduleNames, noOfGroups);
 		
-		Tutorial[] classesObj = new Tutorial[classes.size()];
+		TimetableTutorial[] classesObj = new TimetableTutorial[classes.size()];
 		
 		for(int i=0; i<classesObj.length; i++)
 		{
 			classesObj[i] = classes.get(i);
 		}
 		
-		
-		//setup the jade enviroment
+
+		//setup the jade environment
 		Profile myProfile = new ProfileImpl();
 		Runtime myRuntime = Runtime.instance();
 		ContainerController myContainer = myRuntime.createMainContainer(myProfile);
@@ -49,7 +49,7 @@ public class Main {
 		}
 	}
 	
-	public static ArrayList<Tutorial> InitClasses(ArrayList<String> moduleNames, int noOfGroups) {
+	public static ArrayList<TimetableTutorial> InitClasses(ArrayList<String> moduleNames, int noOfGroups) {
 		//ArrayList for days of the week
 		ArrayList<String> weekdays = new ArrayList<String>();
 		weekdays.add("Monday");
@@ -59,7 +59,7 @@ public class Main {
 		weekdays.add("Friday");
 		
 		//creates the list of classes from the given info
-		ArrayList<Tutorial> classes = new ArrayList<Tutorial>();
+		ArrayList<TimetableTutorial> classes = new ArrayList<TimetableTutorial>();
 		for(int i=0; i<moduleNames.size(); i++)
 		{
 			for(int j=1; j<=noOfGroups; j++)
@@ -74,13 +74,12 @@ public class Main {
 				int randTime = ThreadLocalRandom.current().nextInt(9, 17 + 1);
 				
 				//create class and add to list
-				Tutorial tutorial = new Tutorial();
+				TimetableTutorial tutorial = new TimetableTutorial();
 				tutorial.setModuleName(moduleNames.get(i));
 				tutorial.setGroupNumber(j);
-				TimeSlot timeSlot = new TimeSlot();
-				timeSlot.setDay(randDay);
-				timeSlot.setTime(randTime);
-				tutorial.setTimeSlot(timeSlot);
+				tutorial.setDay(randDay);
+				tutorial.setTime(randTime);
+				tutorial.setAttendees(null);
 				classes.add(tutorial);
 			}
 		}

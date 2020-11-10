@@ -10,7 +10,7 @@ import jade.core.AID;
 
 public class Attends implements Predicate {
 	private AID student;
-	private Tutorial tutorial;
+	private StudentTutorial tutorial;
 	
 	public AID getStudent() {
 		return student;
@@ -20,11 +20,11 @@ public class Attends implements Predicate {
 		this.student = student;
 	}
 	
-	public Tutorial getTutorial() {
+	public StudentTutorial getTutorial() {
 		return tutorial;
 	}
 	
-	public void setTutorial(Tutorial tutorial) {
+	public void setTutorial(StudentTutorial tutorial) {
 		this.tutorial = tutorial;
 	}
 }

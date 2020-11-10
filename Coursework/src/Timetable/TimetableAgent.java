@@ -27,22 +27,23 @@ public class TimetableAgent extends Agent{
 		Object[] args = getArguments();
 		if(args != null && args.length > 0)
 		{
-			ArrayList<Tutorial> classes = new ArrayList<Tutorial>();
-			Tutorial[] classesObj = (Tutorial[]) args;
+			ArrayList<TimetableTutorial> classes = new ArrayList<TimetableTutorial>();
+			TimetableTutorial[] classesObj = (TimetableTutorial[]) args;
 			for(int i=0; i<classesObj.length; i++)
 			{
 				 classes.add(classesObj[i]);
 			}
 			timetable.setTimetable(classes);
 			
-			ArrayList<Tutorial> temp = (ArrayList<Tutorial>) timetable.getTimetable();
+			/**
+			ArrayList<TimetableTutorial> temp = (ArrayList<TimetableTutorial>) timetable.getTimetable();
 			for(int i=0; i<temp.size(); i++)
 			{
 				System.out.println("TimetableAgent.java");
-				System.out.println(temp.get(i).getModuleName() + " " + temp.get(i).getTimeSlot().getTime() + " " + temp.get(i).getTimeSlot().getDay());
+				System.out.println(temp.get(i).getModuleName() + " " + temp.get(i).getAttendees());
 			}
-			
-			addBehaviour(new InitTimetable());	
+			*/
+			addBehaviour(new InitStudents());	
 		}
 		else
 		{
@@ -53,10 +54,28 @@ public class TimetableAgent extends Agent{
 	}
 
 	
-	//Initialise the timetable for the week
-	public class InitTimetable extends OneShotBehaviour {
+	//assign students to their classes
+	public class InitStudents extends OneShotBehaviour {
 		@Override
 		public void action() {
+			//get list of students
+			//for each student
+				//decide weather they're in group 1 or 2
+				//loop through timetable and add student to list of attendees
 		}
 	}
+	
+	//notify students of their classes
+	public class NotifyStudents extends OneShotBehaviour {
+		@Override
+		public void action() {
+			//get list of students
+			
+			//for each student
+				//create student timetable
+				//loop through timetable timetable and move classes where student attends to student timetable
+				//messageStudent their timetable
+		}
+	}
+	
 }
