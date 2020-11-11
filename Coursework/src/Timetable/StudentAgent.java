@@ -1,13 +1,23 @@
 package Timetable;
 
+import Ontology.TimetableOntology;
+import jade.content.lang.Codec;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.Ontology;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 public class StudentAgent extends Agent{
+	//import codec and ontology
+	//code used is from the music shop example in practical 6
+	private Codec codec = new SLCodec();
+	private Ontology ontology = TimetableOntology.getInstance();
 
 	protected void setup() {
 		//doWait(10000);
@@ -53,6 +63,12 @@ public class StudentAgent extends Agent{
 		@Override
 		public void action() {
 			//when message received from timetable agent copy the timetable in the message over to the private student timetable
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
+			ACLMessage msg = myAgent.receive(mt);
+			if(msg!=null) {
+				String message = msg.getContent();
+				System.out.println(message);
+			}
 		}
 	}
 }

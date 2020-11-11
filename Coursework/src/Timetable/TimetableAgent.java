@@ -1,5 +1,6 @@
 package Timetable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -21,6 +22,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 public class TimetableAgent extends Agent{
 	//import codec and ontology
@@ -48,7 +50,7 @@ public class TimetableAgent extends Agent{
 			e.printStackTrace();
 		}
 		
-		//doWait(10000);
+		//doWait(30000);
 		Object[] args = getArguments();
 		if(args != null && args.length > 0)
 		{
@@ -195,31 +197,41 @@ public class TimetableAgent extends Agent{
 				//code used from practical 6, cautiousBuyerAgent
 				//ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
 			
+			ArrayList<TimetableTutorial> tempTimetable = (ArrayList<TimetableTutorial>) timetable.getTimetable();
 			for(int i=0; i<studentList.length; i++)
-			{
-				StudentTimetable tempStudentTimetable = null;
-				
+			{				
 				//loop through timetable
 					//if student is in attendees
 						//add that class to tempStudentTimetable
 				//create message to student
 				//send tempStudentTimetable
-				
-				ArrayList<TimetableTutorial> tempTimetable = (ArrayList<TimetableTutorial>) timetable.getTimetable();
-				try {
-					for(int j=0; j<tempTimetable.size(); j++)
+				ArrayList<StudentTutorial> tempStudentTimetable = new ArrayList<StudentTutorial>();
+				for(int j=0; j<tempTimetable.size(); j++)
+				{
+					if(tempTimetable.get(j).getAttendees().contains(studentList[i]))
 					{
-						//System.out.println(tempTimetable.get(j).getAttendees());
-						if(tempTimetable.get(j).getAttendees().contains(studentList[i]))
-						{
-							System.out.println("Student " + studentList[i] + " attends " + tempTimetable.get(j).getModuleName() + tempTimetable.get(j).getGroupNumber());
-						}
+						//add to tempStudentTimetable
+						StudentTutorial tempTutorial = new StudentTutorial();
+						tempTutorial.setModuleName(tempTimetable.get(j).getModuleName());
+						tempTutorial.setGroupNumber(tempTimetable.get(j).getGroupNumber());
+						tempTutorial.setDay(tempTimetable.get(j).getDay());
+						tempTutorial.setTime(tempTimetable.get(j).getTime());
+						tempStudentTimetable.add(tempTutorial);
 					}
 				}
-				catch (NullPointerException n)
-				{
-					n.printStackTrace();
-				}
+				
+				//send proposal message
+				/*
+				//code used from practical02 BookBuyerAgent
+				ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
+				cfp.addReceiver(studentList[i]);
+				cfp.setContent("testContent");
+				cfp.setConversationId("Test");
+				cfp.setReplyWith("cfp" + System.currentTimeMillis());
+				myAgent.send(cfp);
+				MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("Test"), MessageTemplate.MatchInReplyTo(cfp.getReplyWith()));
+				*/
+				
 			}
 		}
 	}
