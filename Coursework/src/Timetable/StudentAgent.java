@@ -1,6 +1,7 @@
 package Timetable;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import Ontology.TimetableOntology;
 import Ontology.Elements.StudentTimetable;
@@ -31,6 +32,9 @@ public class StudentAgent extends Agent{
 	private Ontology ontology = TimetableOntology.getInstance();
 	//students timetable
 	StudentTimetable timetable = new StudentTimetable();
+	//timeslot student wants
+	
+	
 
 	protected void setup() {
 		//doWait(20000);
@@ -52,7 +56,23 @@ public class StudentAgent extends Agent{
 			e.printStackTrace();
 		}
 		
-		addBehaviour(new InitTimetable(this, 5000));
+		//addBehaviour(new InitTimetable(this, 5000));
+		
+		//REMOVE THIS LATER
+		ArrayList<String> moduleNames = new ArrayList<String>();
+		moduleNames.add("Multi-Agent Systems");
+		//moduleNames.add("Software Architecture");
+		int noOfGroups = 1;
+		
+		timetable.setTimetable(InitClasses(moduleNames, noOfGroups));
+		
+		/*
+		ArrayList<StudentTutorial> temp = (ArrayList<StudentTutorial>) timetable.getTimetable();
+		for(int i=0; i<temp.size(); i++)
+		{
+			System.out.println(temp.get(i).getModuleName() + " " + temp.get(i).getGroupNumber() + " " + temp.get(i).getTime() + " " + temp.get(i).getDay());
+		}
+		*/
 		
 		System.out.println("Student Agent "+getAID().getName() + " is ready");
 	}
@@ -71,6 +91,43 @@ public class StudentAgent extends Agent{
 		
 		//printout a dismissal message
 		System.out.println("Student Agent " + getAID().getName() + " is terminating");
+	}
+	
+	//REMOVE THIS LATER
+	public static ArrayList<StudentTutorial> InitClasses(ArrayList<String> moduleNames, int noOfGroups) {
+		//ArrayList for days of the week
+		ArrayList<String> weekdays = new ArrayList<String>();
+		weekdays.add("Monday");
+		weekdays.add("Tuesday");
+		weekdays.add("Wedensday");
+		weekdays.add("Thursday");
+		weekdays.add("Friday");
+		
+		//creates the list of classes from the given info
+		ArrayList<StudentTutorial> classes = new ArrayList<StudentTutorial>();
+		for(int i=0; i<moduleNames.size(); i++)
+		{
+			for(int j=1; j<=noOfGroups; j++)
+			{
+				//generate random weekday for Tutorial
+				//code used to generate random numbers is from: 
+				///https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
+				int randDayNumber = ThreadLocalRandom.current().nextInt(1, 5 + 1);
+				String randDay = weekdays.get(randDayNumber - 1);
+				
+				//generate random time for tutorial
+				int randTime = ThreadLocalRandom.current().nextInt(9, 17 + 1);
+				
+				//create class and add to list
+				StudentTutorial tutorial = new StudentTutorial();
+				tutorial.setModuleName(moduleNames.get(i));
+				tutorial.setGroupNumber(noOfGroups);
+				tutorial.setDay(randDay);
+				tutorial.setTime(randTime);
+				classes.add(tutorial);
+			}
+		}
+		return classes;
 	}
 	
 	
