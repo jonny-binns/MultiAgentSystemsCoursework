@@ -9,6 +9,7 @@ import Ontology.TimetableOntology;
 import Ontology.Elements.*;
 import jade.content.Concept;
 import jade.content.ContentElement;
+import jade.content.abs.AbsContentElement;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
@@ -17,6 +18,7 @@ import jade.content.onto.OntologyException;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -35,6 +37,10 @@ public class TimetableAgent extends Agent{
 	AID[] studentList;
 	
 	protected void setup() {
+		doWait(20000);
+		getContentManager().registerLanguage(codec);
+		getContentManager().registerOntology(ontology);
+		
 		//register agent with DF agent
 		//code used from 1.2.2 in the practical textbook
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -65,7 +71,7 @@ public class TimetableAgent extends Agent{
 			
 			addBehaviour(new InitStudents());	
 			
-			addBehaviour(new NotifyStudents());
+			addBehaviour(new NotifyStudents(this, 5000));
 						
 		}
 		else
@@ -170,24 +176,16 @@ public class TimetableAgent extends Agent{
 	}
 	
 	//notify students of their classes
-	private class NotifyStudents extends OneShotBehaviour {
+	private class NotifyStudents extends TickerBehaviour {
+		
+		public NotifyStudents(Agent a, long period) {
+			super(a, period);
+		}
+		
+		private boolean finished = false;
+		
 		@Override
-		public void action() {
-			/*
-			ArrayList<TimetableTutorial> temp = (ArrayList<TimetableTutorial>) timetable.getTimetable();
-			for(int i=0; i<temp.size(); i++)
-			{
-				System.out.println(temp.get(i).getModuleName() + "" + temp.get(i).getGroupNumber() + "" + temp.get(i).getAttendees());
-			}
-			*/
-			
-			//get list of students
-			/*
-			for(int i=0; i<studentList.length; i++)
-			{
-				System.out.println(studentList[i]);
-			}
-			*/
+		public void onTick() {
 			
 			//for each student
 				//create student timetable
@@ -220,18 +218,43 @@ public class TimetableAgent extends Agent{
 					}
 				}
 				
-				//send proposal message
-				/*
-				//code used from practical02 BookBuyerAgent
-				ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
-				cfp.addReceiver(studentList[i]);
-				cfp.setContent("testContent");
-				cfp.setConversationId("Test");
-				cfp.setReplyWith("cfp" + System.currentTimeMillis());
-				myAgent.send(cfp);
-				MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("Test"), MessageTemplate.MatchInReplyTo(cfp.getReplyWith()));
-				*/
+				//convert to studentTimetable object
+				StudentTimetable tempStudentTimetableObj = new StudentTimetable();
+				tempStudentTimetableObj.setTimetable(tempStudentTimetable);
 				
+				
+				ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
+				msg.addReceiver(studentList[i]);
+				msg.setLanguage(codec.getName());
+				msg.setOntology(ontology.getName());
+				try {
+					getContentManager().fillContent(msg, (AbsContentElement) tempStudentTimetableObj);
+					send(msg);
+				} 
+				catch (CodecException | OntologyException e) {
+					e.printStackTrace();
+				}
+
+				finished = true;
+				
+				
+				/**
+				//send proposal message				
+				//code used from practical 06 CautiousBuyerAgent
+				ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
+				msg.addReceiver(studentList[i]);
+				msg.setLanguage(codec.getName());
+				msg.setOntology(ontology.getName());
+				try {
+					
+					msg.setContentObject(tempStudentTimetableObj);
+					send(msg);
+				}
+				catch (IOException e){
+					e.printStackTrace();
+				}
+				finished = true;
+				*/
 			}
 		}
 	}
