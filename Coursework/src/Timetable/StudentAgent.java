@@ -62,30 +62,7 @@ public class StudentAgent extends Agent{
 		}
 		
 		addBehaviour(new InitTimetable(this, 5000));
-		/*
-		//REMOVE THIS LATER
-		ArrayList<String> moduleNames = new ArrayList<String>();
-		moduleNames.add("Multi-Agent Systems");
-		//moduleNames.add("Software Architecture");
-		int noOfGroups = 1;
-		
-		timetable.setTimetable(InitClasses(moduleNames, noOfGroups));
-		
-		TimeSlot wantsTS = new TimeSlot();
-		wantsTS.setDay("Monday");
-		wantsTS.setTime(9);
-		wants.add(wantsTS);
-		
-		
-		utility = calculateUtilityFunction(wants,preferNot, unable, timetable);
-		*/
-		/*
-		ArrayList<StudentTutorial> temp = (ArrayList<StudentTutorial>) timetable.getTimetable();
-		for(int i=0; i<temp.size(); i++)
-		{
-			System.out.println(temp.get(i).getModuleName() + " " + temp.get(i).getGroupNumber() + " " + temp.get(i).getTime() + " " + temp.get(i).getDay());
-		}
-		*/
+
 		
 		System.out.println("Student Agent "+getAID().getName() + " is ready");
 	}
@@ -106,43 +83,7 @@ public class StudentAgent extends Agent{
 		System.out.println("Student Agent " + getAID().getName() + " is terminating");
 	}
 	
-	//REMOVE THIS LATER
-	public static ArrayList<StudentTutorial> InitClasses(ArrayList<String> moduleNames, int noOfGroups) {
-		//ArrayList for days of the week
-		ArrayList<String> weekdays = new ArrayList<String>();
-		weekdays.add("Monday");
-		weekdays.add("Tuesday");
-		weekdays.add("Wedensday");
-		weekdays.add("Thursday");
-		weekdays.add("Friday");
-		
-		//creates the list of classes from the given info
-		ArrayList<StudentTutorial> classes = new ArrayList<StudentTutorial>();
-		for(int i=0; i<moduleNames.size(); i++)
-		{
-			for(int j=1; j<=noOfGroups; j++)
-			{
-				//generate random weekday for Tutorial
-				//code used to generate random numbers is from: 
-				///https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
-				int randDayNumber = ThreadLocalRandom.current().nextInt(1, 5 + 1);
-				String randDay = weekdays.get(randDayNumber - 1);
-				
-				//generate random time for tutorial
-				int randTime = ThreadLocalRandom.current().nextInt(9, 17 + 1);
-				
-				//create class and add to list
-				StudentTutorial tutorial = new StudentTutorial();
-				tutorial.setModuleName(moduleNames.get(i));
-				tutorial.setGroupNumber(noOfGroups);
-				tutorial.setDay("Monday");
-				tutorial.setTime(9);
-				classes.add(tutorial);
-			}
-		}
-		return classes;
-	}
-	
+	/*
 	private int calculateUtilityFunction(ArrayList<TimeSlot> wants, ArrayList<TimeSlot> preferNot, ArrayList<TimeSlot> unable, StudentTimetable timetable){
 		int utility = 0;
 		
@@ -184,7 +125,7 @@ public class StudentAgent extends Agent{
 		}
 		return utility;
 	}
-	
+	*/
 	
 	private class InitTimetable extends TickerBehaviour {
 		
@@ -192,52 +133,44 @@ public class StudentAgent extends Agent{
 			super(a, period);
 		}
 		
-		private boolean finished = false;
+		private boolean finished;
+		
 		
 		@Override
 		public void onTick() {
-			//when message received from timetable agent copy the timetable in the message over to the private student timetable
-			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.QUERY_IF);
-			ACLMessage msg = receive(mt);
-			if(msg != null)
+			if(!finished)
 			{
-				/**
-				try {
-					StudentTimetable tempStudentTimetableObj = (StudentTimetable) msg.getContentObject();
-					ArrayList<StudentTutorial> tempStudentTimetable = (ArrayList<StudentTutorial>) tempStudentTimetableObj.getTimetable();
-					System.out.println(getAID().getName());
-					for(int i=0; i<tempStudentTimetable.size(); i++)
-					{
-						System.out.println(tempStudentTimetable.get(i).getModuleName() + tempStudentTimetable.get(i).getGroupNumber());
-					}
-				} 
-				catch (UnreadableException e) {
-					e.printStackTrace();
-				}
-				finished = true;
-				*/
-				
-				try {
-					ContentElement ce = null;
-					System.out.println(msg.getContent());
+				//should only respond to propose messages
+				MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROPOSE);
+				ACLMessage msg = receive(mt);
+				if(msg != null)
+				{
+					try {
+						ContentElement ce = null;
+						//System.out.println(msg.getContent());
 					
-					ce = getContentManager().extractContent(msg);	
-					
-					System.out.println(ce);
-					if(ce instanceof StudentTutorial)
-					{
-						StudentTimetable tempTimetable = (StudentTimetable) ce;
-						System.out.println(tempTimetable);
+						//let jade convert from string to java object
+						ce = getContentManager().extractContent(msg);
+						if (ce instanceof Attends)
+						{
+							Attends attends = (Attends) ce;
+							StudentTimetable tempTimetable = attends.getTimetable();
+							ArrayList<StudentTutorial> temp = (ArrayList<StudentTutorial>) tempTimetable.getTimetable();
+							for(int i=0; i<temp.size(); i++)
+							{
+								System.out.println(temp.get(i).getModuleName() + temp.get(i).getGroupNumber());
+							}
+						}
+						finished = true;
+					} 
+					catch (CodecException | OntologyException e) {
+						e.printStackTrace();
 					}
-				}
-				catch (CodecException ce) {
-					ce.printStackTrace();
-				}
-				catch (OntologyException oe) {
-					oe.printStackTrace();
+					
 				}
 			}
-			finished = true;
+
 		}
+		
 	}
 }

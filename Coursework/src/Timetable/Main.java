@@ -14,13 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Main {
 
 	public static void main(String[] args) {
-		//initialise timetable to be passed as an argument to timetable agent
-		ArrayList<String> moduleNames = new ArrayList<String>();
-		moduleNames.add("Multi-Agent Systems");
-		moduleNames.add("Software Architecture");
-		int noOfGroups = 2;
-		
-		ArrayList<TimetableTutorial> classes = InitClasses(moduleNames, noOfGroups);
+		ArrayList<TimetableTutorial> classes = InitClasses();		
 		
 		TimetableTutorial[] classesObj = new TimetableTutorial[classes.size()];
 		
@@ -29,7 +23,7 @@ public class Main {
 			classesObj[i] = classes.get(i);
 		}
 		
-
+		
 		//setup the jade environment
 		Profile myProfile = new ProfileImpl();
 		Runtime myRuntime = Runtime.instance();
@@ -41,8 +35,8 @@ public class Main {
 			AgentController studentAgent = myContainer.createNewAgent("student", StudentAgent.class.getCanonicalName(), null);
 			studentAgent.start();
 			
-			AgentController studentAgent1 = myContainer.createNewAgent("student1", StudentAgent.class.getCanonicalName(), null);
-			studentAgent1.start();
+			//AgentController studentAgent1 = myContainer.createNewAgent("student1", StudentAgent.class.getCanonicalName(), null);
+			//studentAgent1.start();
 			
 			AgentController timetableAgent = myContainer.createNewAgent("timetable agent", TimetableAgent.class.getCanonicalName(), classesObj);
 			timetableAgent.start();
@@ -53,41 +47,34 @@ public class Main {
 		}
 	}
 	
-	public static ArrayList<TimetableTutorial> InitClasses(ArrayList<String> moduleNames, int noOfGroups) {
-		//ArrayList for days of the week
-		//deal with potential duplicates
-		ArrayList<String> weekdays = new ArrayList<String>();
-		weekdays.add("Monday");
-		weekdays.add("Tuesday");
-		weekdays.add("Wedensday");
-		weekdays.add("Thursday");
-		weekdays.add("Friday");
-		
-		//creates the list of classes from the given info
+	public static ArrayList<TimetableTutorial> InitClasses() {
+		//creates the list of tutorials
 		ArrayList<TimetableTutorial> classes = new ArrayList<TimetableTutorial>();
-		for(int i=0; i<moduleNames.size(); i++)
-		{
-			for(int j=1; j<=noOfGroups; j++)
-			{
-				//generate random weekday for Tutorial
-				//code used to generate random numbers is from: 
-				///https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
-				int randDayNumber = ThreadLocalRandom.current().nextInt(1, 5 + 1);
-				String randDay = weekdays.get(randDayNumber - 1);
-				
-				//generate random time for tutorial
-				int randTime = ThreadLocalRandom.current().nextInt(9, 17 + 1);
-				
-				//create class and add to list
-				TimetableTutorial tutorial = new TimetableTutorial();
-				tutorial.setModuleName(moduleNames.get(i));
-				tutorial.setGroupNumber(j);
-				tutorial.setDay(randDay);
-				tutorial.setTime(randTime);
-				tutorial.setAttendees(null);
-				classes.add(tutorial);
-			}
-		}
+		
+		//class 1
+		TimetableTutorial tutorial1 = new TimetableTutorial();
+		tutorial1.setModuleName("Multi-Agent Systems");
+		tutorial1.setGroupNumber(1);
+		tutorial1.setAttendees(null);
+		TimeSlot timeSlot1 = new TimeSlot();
+		timeSlot1.setDay("Monday");
+		timeSlot1.setTime(9);
+		tutorial1.setTimeSlot(timeSlot1);
+		classes.add(tutorial1);
+		
+		/*
+		//class 2
+		TimetableTutorial tutorial2 = new TimetableTutorial();
+		tutorial2.setModuleName("Multi-Agent Systems");
+		tutorial2.setGroupNumber(2);
+		tutorial2.setAttendees(null);
+		TimeSlot timeSlot2 = new TimeSlot();
+		timeSlot2.setDay("Monday");
+		timeSlot2.setTime(11);
+		tutorial2.setTimeSlot(timeSlot2);
+		classes.add(tutorial2);
+		*/
+		
 		return classes;
 	}
 

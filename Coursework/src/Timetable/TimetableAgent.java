@@ -168,13 +168,20 @@ public class TimetableAgent extends Agent{
 				}
 				//updates timetable
 				timetable.setTimetable(tempTimetable);
+				/*
+				ArrayList<TimetableTutorial>tmp = (ArrayList<TimetableTutorial>) timetable.getTimetable();
+				for(int i=0; i<tmp.size(); i++)
+				{
+					System.out.println(tmp.get(i).getModuleName() + " " + tmp.get(i).getGroupNumber() + tmp.get(i).getAttendees());
+				}
+				*/
 			}
 			catch(FIPAException fe) {
 				fe.printStackTrace();
 			}
 		}	
 	}
-	
+
 	//notify students of their classes
 	private class NotifyStudents extends TickerBehaviour {
 		
@@ -182,27 +189,20 @@ public class TimetableAgent extends Agent{
 			super(a, period);
 		}
 		
-		private boolean finished = false;
-		
 		@Override
 		public void onTick() {
-			
 			//for each student
 				//create student timetable
 				//loop through timetable timetable and move classes where student attends to student timetable
-				//message Student their timetable
+				//create attends predicate
+				
+				//message student their timetable
 				//prepare propose message
-				//code used from practical 6, cautiousBuyerAgent
-				//ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
+				//code from practical 6
 			
 			ArrayList<TimetableTutorial> tempTimetable = (ArrayList<TimetableTutorial>) timetable.getTimetable();
 			for(int i=0; i<studentList.length; i++)
-			{				
-				//loop through timetable
-					//if student is in attendees
-						//add that class to tempStudentTimetable
-				//create message to student
-				//send tempStudentTimetable
+			{
 				ArrayList<StudentTutorial> tempStudentTimetable = new ArrayList<StudentTutorial>();
 				for(int j=0; j<tempTimetable.size(); j++)
 				{
@@ -212,8 +212,7 @@ public class TimetableAgent extends Agent{
 						StudentTutorial tempTutorial = new StudentTutorial();
 						tempTutorial.setModuleName(tempTimetable.get(j).getModuleName());
 						tempTutorial.setGroupNumber(tempTimetable.get(j).getGroupNumber());
-						tempTutorial.setDay(tempTimetable.get(j).getDay());
-						tempTutorial.setTime(tempTimetable.get(j).getTime());
+						tempTutorial.setTimeSlot(tempTimetable.get(j).getTimeSlot());
 						tempStudentTimetable.add(tempTutorial);
 					}
 				}
@@ -222,6 +221,32 @@ public class TimetableAgent extends Agent{
 				StudentTimetable tempStudentTimetableObj = new StudentTimetable();
 				tempStudentTimetableObj.setTimetable(tempStudentTimetable);
 				
+				//convert to Attends for messaging
+				Attends attendsTemp = new Attends();
+				attendsTemp.setStudent(studentList[i]);
+				attendsTemp.setTimetable(tempStudentTimetableObj);
+				
+				//send message
+				//prepare the propose message
+				ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
+				msg.addReceiver(studentList[i]);
+				msg.setLanguage(codec.getName());
+				msg.setOntology(ontology.getName());
+				try {
+					 // Let JADE convert from Java objects to string
+					 getContentManager().fillContent(msg, attendsTemp);
+					 send(msg);
+				}
+				catch (CodecException ce) {
+					 ce.printStackTrace();
+				}
+				catch (OntologyException oe) {
+					 oe.printStackTrace();
+				} 
+
+			}
+			
+			/*				
 				
 				ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
 				msg.addReceiver(studentList[i]);
@@ -238,7 +263,7 @@ public class TimetableAgent extends Agent{
 				finished = true;
 				
 				
-				/**
+
 				//send proposal message				
 				//code used from practical 06 CautiousBuyerAgent
 				ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
@@ -254,8 +279,8 @@ public class TimetableAgent extends Agent{
 					e.printStackTrace();
 				}
 				finished = true;
-				*/
 			}
+			*/
 		}
 	}
 	
