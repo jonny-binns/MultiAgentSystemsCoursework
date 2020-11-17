@@ -7,9 +7,11 @@
 package Ontology.Elements;
 
 import java.util.List;
+
+import jade.content.Concept;
 import jade.content.onto.annotations.AggregateSlot;
 
-public class StudentTimetable extends StudentTutorial {
+public class StudentTimetable implements Concept {
 	private List<StudentTutorial> timetable;
 
 	@AggregateSlot(cardMin=1)

@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 import Ontology.TimetableOntology;
-import Ontology.Elements.StudentTimetable;
-import Ontology.Elements.StudentTutorial;
-import Ontology.Elements.TimetableTutorial;
+import Ontology.Elements.*;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
@@ -32,7 +30,14 @@ public class StudentAgent extends Agent{
 	private Ontology ontology = TimetableOntology.getInstance();
 	//students timetable
 	StudentTimetable timetable = new StudentTimetable();
-	//timeslot student wants
+	//timeslots student wants
+	ArrayList<TimeSlot> wants = new ArrayList<TimeSlot>();
+	//timeslots student prefers not to have
+	ArrayList<TimeSlot> preferNot = new ArrayList<TimeSlot>();
+	//timeslots where student is unable to attend
+	ArrayList<TimeSlot> unable = new ArrayList<TimeSlot>();
+	//utility score
+	int utility;
 	
 	
 
@@ -56,8 +61,8 @@ public class StudentAgent extends Agent{
 			e.printStackTrace();
 		}
 		
-		//addBehaviour(new InitTimetable(this, 5000));
-		
+		addBehaviour(new InitTimetable(this, 5000));
+		/*
 		//REMOVE THIS LATER
 		ArrayList<String> moduleNames = new ArrayList<String>();
 		moduleNames.add("Multi-Agent Systems");
@@ -66,6 +71,14 @@ public class StudentAgent extends Agent{
 		
 		timetable.setTimetable(InitClasses(moduleNames, noOfGroups));
 		
+		TimeSlot wantsTS = new TimeSlot();
+		wantsTS.setDay("Monday");
+		wantsTS.setTime(9);
+		wants.add(wantsTS);
+		
+		
+		utility = calculateUtilityFunction(wants,preferNot, unable, timetable);
+		*/
 		/*
 		ArrayList<StudentTutorial> temp = (ArrayList<StudentTutorial>) timetable.getTimetable();
 		for(int i=0; i<temp.size(); i++)
@@ -122,12 +135,54 @@ public class StudentAgent extends Agent{
 				StudentTutorial tutorial = new StudentTutorial();
 				tutorial.setModuleName(moduleNames.get(i));
 				tutorial.setGroupNumber(noOfGroups);
-				tutorial.setDay(randDay);
-				tutorial.setTime(randTime);
+				tutorial.setDay("Monday");
+				tutorial.setTime(9);
 				classes.add(tutorial);
 			}
 		}
 		return classes;
+	}
+	
+	private int calculateUtilityFunction(ArrayList<TimeSlot> wants, ArrayList<TimeSlot> preferNot, ArrayList<TimeSlot> unable, StudentTimetable timetable){
+		int utility = 0;
+		
+		//max score of 40 per class
+		
+		//loop through timetable
+			//loop through wants
+				//check if class has a timeslot the student wants, if yes then +40
+			//loop through prefers not
+				//check if class has a timeslot the student prefers not to have, if yes then +1
+			//loop through unable
+				//check if class has a timeslot the student cant attend, if yes then +0
+				//else calculate no of timeslots away from when the student cant attend
+		
+		ArrayList<StudentTutorial> temp = (ArrayList<StudentTutorial>) timetable.getTimetable();
+		for(int i=0; i<temp.size(); i++)
+		{
+			
+			//rebuild timeslot for the tutorial
+			TimeSlot tutorialTemp = new TimeSlot();
+			tutorialTemp.setDay(temp.get(i).getDay());
+			tutorialTemp.setTime(temp.get(i).getTime());
+			
+			for(int j=0; j<wants.size(); j++)
+			{
+				//check if a class has the timeslot the student wants, if yes then +40
+				//rebuild timeslot
+				TimeSlot wantTemp = new TimeSlot();
+				wantTemp.setDay(wants.get(j).getDay());
+				wantTemp.setTime(wants.get(j).getTime());
+				
+				if(wantTemp == tutorialTemp)
+				{
+					System.out.println("179");
+				}
+			}
+			
+			
+		}
+		return utility;
 	}
 	
 	

@@ -1,6 +1,6 @@
 /**
  * @author jonny
- * represents an agent attending a tutorial
+ * represents the timetable an agent attends
  */
 
 package Ontology.Elements;
@@ -10,7 +10,7 @@ import jade.core.AID;
 
 public class Attends implements Predicate {
 	private AID student;
-	private StudentTutorial tutorial;
+	private StudentTimetable timetable;
 	
 	public AID getStudent() {
 		return student;
@@ -20,11 +20,11 @@ public class Attends implements Predicate {
 		this.student = student;
 	}
 	
-	public StudentTutorial getTutorial() {
-		return tutorial;
+	public StudentTimetable getTimetable() {
+		return timetable;
 	}
 	
-	public void setTutorial(StudentTutorial tutorial) {
-		this.tutorial = tutorial;
+	public void setTimetable(StudentTimetable timetable) {
+		this.timetable = timetable;
 	}
 }

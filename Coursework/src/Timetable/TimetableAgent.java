@@ -37,7 +37,7 @@ public class TimetableAgent extends Agent{
 	AID[] studentList;
 	
 	protected void setup() {
-		doWait(20000);
+		//doWait(20000);
 		getContentManager().registerLanguage(codec);
 		getContentManager().registerOntology(ontology);
 		

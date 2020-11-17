@@ -41,13 +41,12 @@ public class Main {
 			AgentController studentAgent = myContainer.createNewAgent("student", StudentAgent.class.getCanonicalName(), null);
 			studentAgent.start();
 			
-			/*
 			AgentController studentAgent1 = myContainer.createNewAgent("student1", StudentAgent.class.getCanonicalName(), null);
 			studentAgent1.start();
 			
 			AgentController timetableAgent = myContainer.createNewAgent("timetable agent", TimetableAgent.class.getCanonicalName(), classesObj);
 			timetableAgent.start();
-			*/
+			
 		}
 		catch(Exception e) {
 			System.out.println("Exception starting agent: " + e.toString());
@@ -56,6 +55,7 @@ public class Main {
 	
 	public static ArrayList<TimetableTutorial> InitClasses(ArrayList<String> moduleNames, int noOfGroups) {
 		//ArrayList for days of the week
+		//deal with potential duplicates
 		ArrayList<String> weekdays = new ArrayList<String>();
 		weekdays.add("Monday");
 		weekdays.add("Tuesday");
