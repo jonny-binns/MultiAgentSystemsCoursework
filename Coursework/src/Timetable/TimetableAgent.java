@@ -37,7 +37,7 @@ public class TimetableAgent extends Agent{
 	AID[] studentList;
 	
 	protected void setup() {
-		//doWait(20000);
+		doWait(20000);
 		getContentManager().registerLanguage(codec);
 		getContentManager().registerOntology(ontology);
 		
@@ -71,7 +71,7 @@ public class TimetableAgent extends Agent{
 			
 			addBehaviour(new InitStudents());	
 			
-			addBehaviour(new NotifyStudents(this, 5000));
+			addBehaviour(new NotifyStudents(this, 10000));
 						
 		}
 		else
@@ -189,9 +189,13 @@ public class TimetableAgent extends Agent{
 			super(a, period);
 		}
 		
+		private boolean finished;
+		
 		@Override
 		public void onTick() {
-			//for each student
+			if(!finished)
+			{
+				//for each student
 				//create student timetable
 				//loop through timetable timetable and move classes where student attends to student timetable
 				//create attends predicate
@@ -199,6 +203,10 @@ public class TimetableAgent extends Agent{
 				//message student their timetable
 				//prepare propose message
 				//code from practical 6
+				
+				//on receipt of an accept proposal message
+				//move to next student
+				
 			
 			ArrayList<TimetableTutorial> tempTimetable = (ArrayList<TimetableTutorial>) timetable.getTimetable();
 			for(int i=0; i<studentList.length; i++)
@@ -228,10 +236,11 @@ public class TimetableAgent extends Agent{
 				
 				//send message
 				//prepare the propose message
-				ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
+				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 				msg.addReceiver(studentList[i]);
 				msg.setLanguage(codec.getName());
 				msg.setOntology(ontology.getName());
+				msg.setConversationId("Student-Timetable");
 				try {
 					 // Let JADE convert from Java objects to string
 					 getContentManager().fillContent(msg, attendsTemp);
@@ -243,44 +252,21 @@ public class TimetableAgent extends Agent{
 				catch (OntologyException oe) {
 					 oe.printStackTrace();
 				} 
+				
+				/*
+				//waits for accept proposal message
+				MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
+				ACLMessage reply = receive(mt);
+				if(reply != null)
+				{
+					System.out.println("timetable received accept proposal");
+					i++;
+				}
+				*/
+			}
+			finished = true;
 
 			}
-			
-			/*				
-				
-				ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
-				msg.addReceiver(studentList[i]);
-				msg.setLanguage(codec.getName());
-				msg.setOntology(ontology.getName());
-				try {
-					getContentManager().fillContent(msg, (AbsContentElement) tempStudentTimetableObj);
-					send(msg);
-				} 
-				catch (CodecException | OntologyException e) {
-					e.printStackTrace();
-				}
-
-				finished = true;
-				
-				
-
-				//send proposal message				
-				//code used from practical 06 CautiousBuyerAgent
-				ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
-				msg.addReceiver(studentList[i]);
-				msg.setLanguage(codec.getName());
-				msg.setOntology(ontology.getName());
-				try {
-					
-					msg.setContentObject(tempStudentTimetableObj);
-					send(msg);
-				}
-				catch (IOException e){
-					e.printStackTrace();
-				}
-				finished = true;
-			}
-			*/
 		}
 	}
 	

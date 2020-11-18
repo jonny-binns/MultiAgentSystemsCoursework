@@ -42,7 +42,7 @@ public class StudentAgent extends Agent{
 	
 
 	protected void setup() {
-		//doWait(20000);
+		doWait(20000);
 		getContentManager().registerLanguage(codec);
 		getContentManager().registerOntology(ontology);
 		
@@ -61,7 +61,7 @@ public class StudentAgent extends Agent{
 			e.printStackTrace();
 		}
 		
-		addBehaviour(new InitTimetable(this, 5000));
+		addBehaviour(new InitTimetable());
 
 		
 		System.out.println("Student Agent "+getAID().getName() + " is ready");
@@ -83,8 +83,19 @@ public class StudentAgent extends Agent{
 		System.out.println("Student Agent " + getAID().getName() + " is terminating");
 	}
 	
-	/*
+	
 	private int calculateUtilityFunction(ArrayList<TimeSlot> wants, ArrayList<TimeSlot> preferNot, ArrayList<TimeSlot> unable, StudentTimetable timetable){
+		int utility = 0;
+		
+		//loop through timetable
+			//if wants contains timeslot then +40
+			//if prefers not contains timeslot then +1
+			//if unable contains timeslot then +0
+			//else calculate no of timeslots away from unable
+		
+		return utility;
+		
+		/*
 		int utility = 0;
 		
 		//max score of 40 per class
@@ -124,24 +135,25 @@ public class StudentAgent extends Agent{
 			
 		}
 		return utility;
+		*/
 	}
-	*/
 	
-	private class InitTimetable extends TickerBehaviour {
-		
+	private class InitTimetable extends  CyclicBehaviour {
+		/*
 		public InitTimetable(Agent a, long period) {
 			super(a, period);
 		}
-		
+		*/
 		private boolean finished;
 		
 		
 		@Override
-		public void onTick() {
+		public void action() {
 			if(!finished)
 			{
 				//should only respond to propose messages
-				MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROPOSE);
+				//code used from pracitcal 06 sellerAgent
+				MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 				ACLMessage msg = receive(mt);
 				if(msg != null)
 				{
@@ -155,18 +167,15 @@ public class StudentAgent extends Agent{
 						{
 							Attends attends = (Attends) ce;
 							StudentTimetable tempTimetable = attends.getTimetable();
-							ArrayList<StudentTutorial> temp = (ArrayList<StudentTutorial>) tempTimetable.getTimetable();
-							for(int i=0; i<temp.size(); i++)
-							{
-								System.out.println(temp.get(i).getModuleName() + temp.get(i).getGroupNumber());
-							}
+							timetable.setTimetable(tempTimetable.getTimetable());
 						}
-						finished = true;
+						
 					} 
 					catch (CodecException | OntologyException e) {
 						e.printStackTrace();
 					}
 					
+					finished = true;
 				}
 			}
 
