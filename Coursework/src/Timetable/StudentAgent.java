@@ -61,14 +61,14 @@ public class StudentAgent extends Agent{
 			e.printStackTrace();
 		}
 		
-		addBehaviour(new InitTimetable());
-		
 		TimeSlot wantsTS = new TimeSlot();
 		wantsTS.setDay("Monday");
 		wantsTS.setTime(9);
 		wants.add(wantsTS);
 		
-		addBehaviour(new InitUtility());
+		addBehaviour(new InitBehaviour());
+	
+		
 		
 		System.out.println("Student Agent "+getAID().getName() + " is ready");
 	}
@@ -90,14 +90,9 @@ public class StudentAgent extends Agent{
 	}
 	
 		
-	private class InitTimetable extends CyclicBehaviour {
-		/*
-		public InitTimetable(Agent a, long period) {
-			super(a, period);
-		}
-		*/
+	private class InitBehaviour extends CyclicBehaviour {
+
 		private boolean finished;
-		
 		
 		@Override
 		public void action() {
@@ -121,50 +116,30 @@ public class StudentAgent extends Agent{
 							StudentTimetable tempTimetable = attends.getTimetable();
 							ArrayList<StudentTutorial> tempTutorials = (ArrayList<StudentTutorial>) tempTimetable.getTimetable();  
 							timetable.setTimetable(tempTutorials);
+							/*
 							ArrayList<StudentTutorial> temp = (ArrayList<StudentTutorial>) timetable.getTimetable();
 							for(int i=0; i<temp.size(); i++)
 							{
 								System.out.println(temp.get(i).getModuleName());
 							}
+							*/
 						}
 						
 					} 
 					catch (CodecException | OntologyException e) {
 						e.printStackTrace();
 					}
+					
+					//calculate initial utility score
+					utility = CalculateUtilityFunction(wants, preferNot, unable);
+					
 					finished = true;
 				}
 			}			
 		}
 	}
 	
-	private class InitUtility extends OneShotBehaviour{
 
-
-		@Override
-		public void action() {
-			if(timetable.getTimetable() != null )
-			{
-				System.out.println("line 171");
-			}
-			else
-			{
-				System.out.println("line 175");
-			}
-
-			//System.out.println("Line 146");
-			//int utility = CalculateUtilityFunction(wants, preferNot, unable, timetable);
-			/*
-			ArrayList<StudentTutorial> temp = (ArrayList<StudentTutorial>) timetable.getTimetable();
-			for(int i=0; i<temp.size(); i++)
-			{
-				System.out.println(temp.get(i).getModuleName());
-			}
-			*/
-			//System.out.println(timetable.getTimetable());
-		}
-	}
-	
 	private int CalculateUtilityFunction(ArrayList<TimeSlot> wants, ArrayList<TimeSlot> preferNot, ArrayList<TimeSlot> unable){
 		//loop through timetable
 			//if wants contains timeslot then +40
@@ -174,19 +149,33 @@ public class StudentAgent extends Agent{
 		
 		//max score of 40
 		int utility = 0;
-		/*
+		
 		ArrayList<StudentTutorial> tempTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
 		for (int i=0; i<tempTimetable.size(); i++)
 		{
-			System.out.println(tempTimetable.get(i));
+			//System.out.println("line 156" + tempTimetable.get(i).getModuleName());
 			
-			if(wants.contains(tempTimetable.get(i).getTimeSlot()))
+			TimeSlot tempTS = tempTimetable.get(i).getTimeSlot();
+			
+			if(wants.contains(tempTS))
 			{
-				System.out.println("wants contains " + tempTimetable.get(i).getModuleName());
+				//System.out.println("wants contains " + tempTimetable.get(i).getModuleName());
+				utility += 40;
 			}
-			
+			else if(preferNot.contains(tempTS))
+			{
+				utility +=1;
+			}
+			else if(unable.contains(tempTS))
+			{
+				utility +=0;
+			}
+			else
+			{
+				
+			}
 		}
-		*/
+		
 		return utility;
 		
 		/*
