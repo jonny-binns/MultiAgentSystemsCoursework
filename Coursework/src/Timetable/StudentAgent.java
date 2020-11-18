@@ -62,7 +62,13 @@ public class StudentAgent extends Agent{
 		}
 		
 		addBehaviour(new InitTimetable());
-
+		
+		TimeSlot wantsTS = new TimeSlot();
+		wantsTS.setDay("Monday");
+		wantsTS.setTime(9);
+		wants.add(wantsTS);
+		
+		addBehaviour(new InitUtility());
 		
 		System.out.println("Student Agent "+getAID().getName() + " is ready");
 	}
@@ -83,16 +89,104 @@ public class StudentAgent extends Agent{
 		System.out.println("Student Agent " + getAID().getName() + " is terminating");
 	}
 	
-	
-	private int calculateUtilityFunction(ArrayList<TimeSlot> wants, ArrayList<TimeSlot> preferNot, ArrayList<TimeSlot> unable, StudentTimetable timetable){
-		int utility = 0;
 		
+	private class InitTimetable extends CyclicBehaviour {
+		/*
+		public InitTimetable(Agent a, long period) {
+			super(a, period);
+		}
+		*/
+		private boolean finished;
+		
+		
+		@Override
+		public void action() {
+			if(!finished)
+			{
+				//should only respond to propose messages
+				//code used from pracitcal 06 sellerAgent
+				MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+				ACLMessage msg = receive(mt);
+				if(msg != null)
+				{
+					try {
+						ContentElement ce = null;
+						//System.out.println(msg.getContent());
+					
+						//let jade convert from string to java object
+						ce = getContentManager().extractContent(msg);
+						if (ce instanceof Attends)
+						{
+							Attends attends = (Attends) ce;
+							StudentTimetable tempTimetable = attends.getTimetable();
+							ArrayList<StudentTutorial> tempTutorials = (ArrayList<StudentTutorial>) tempTimetable.getTimetable();  
+							timetable.setTimetable(tempTutorials);
+							ArrayList<StudentTutorial> temp = (ArrayList<StudentTutorial>) timetable.getTimetable();
+							for(int i=0; i<temp.size(); i++)
+							{
+								System.out.println(temp.get(i).getModuleName());
+							}
+						}
+						
+					} 
+					catch (CodecException | OntologyException e) {
+						e.printStackTrace();
+					}
+					finished = true;
+				}
+			}			
+		}
+	}
+	
+	private class InitUtility extends OneShotBehaviour{
+
+
+		@Override
+		public void action() {
+			if(timetable.getTimetable() != null )
+			{
+				System.out.println("line 171");
+			}
+			else
+			{
+				System.out.println("line 175");
+			}
+
+			//System.out.println("Line 146");
+			//int utility = CalculateUtilityFunction(wants, preferNot, unable, timetable);
+			/*
+			ArrayList<StudentTutorial> temp = (ArrayList<StudentTutorial>) timetable.getTimetable();
+			for(int i=0; i<temp.size(); i++)
+			{
+				System.out.println(temp.get(i).getModuleName());
+			}
+			*/
+			//System.out.println(timetable.getTimetable());
+		}
+	}
+	
+	private int CalculateUtilityFunction(ArrayList<TimeSlot> wants, ArrayList<TimeSlot> preferNot, ArrayList<TimeSlot> unable){
 		//loop through timetable
 			//if wants contains timeslot then +40
 			//if prefers not contains timeslot then +1
 			//if unable contains timeslot then +0
 			//else calculate no of timeslots away from unable
 		
+		//max score of 40
+		int utility = 0;
+		/*
+		ArrayList<StudentTutorial> tempTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
+		for (int i=0; i<tempTimetable.size(); i++)
+		{
+			System.out.println(tempTimetable.get(i));
+			
+			if(wants.contains(tempTimetable.get(i).getTimeSlot()))
+			{
+				System.out.println("wants contains " + tempTimetable.get(i).getModuleName());
+			}
+			
+		}
+		*/
 		return utility;
 		
 		/*
@@ -136,50 +230,5 @@ public class StudentAgent extends Agent{
 		}
 		return utility;
 		*/
-	}
-	
-	private class InitTimetable extends  CyclicBehaviour {
-		/*
-		public InitTimetable(Agent a, long period) {
-			super(a, period);
-		}
-		*/
-		private boolean finished;
-		
-		
-		@Override
-		public void action() {
-			if(!finished)
-			{
-				//should only respond to propose messages
-				//code used from pracitcal 06 sellerAgent
-				MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-				ACLMessage msg = receive(mt);
-				if(msg != null)
-				{
-					try {
-						ContentElement ce = null;
-						//System.out.println(msg.getContent());
-					
-						//let jade convert from string to java object
-						ce = getContentManager().extractContent(msg);
-						if (ce instanceof Attends)
-						{
-							Attends attends = (Attends) ce;
-							StudentTimetable tempTimetable = attends.getTimetable();
-							timetable.setTimetable(tempTimetable.getTimetable());
-						}
-						
-					} 
-					catch (CodecException | OntologyException e) {
-						e.printStackTrace();
-					}
-					
-					finished = true;
-				}
-			}
-
-		}
-		
 	}
 }
