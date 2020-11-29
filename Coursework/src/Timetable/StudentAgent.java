@@ -62,9 +62,9 @@ public class StudentAgent extends Agent{
 		}
 		
 		TimeSlot wantsTS = new TimeSlot();
-		wantsTS.setDay("Monday");
-		wantsTS.setTime(9);
-		wants.add(wantsTS);
+		wantsTS.setDay("Friday");
+		wantsTS.setTime(17);
+		unable.add(wantsTS);
 		
 		addBehaviour(new InitBehaviour());
 	
@@ -132,6 +132,7 @@ public class StudentAgent extends Agent{
 					
 					//calculate initial utility score
 					utility = CalculateUtilityFunction(wants, preferNot, unable);
+					System.out.println(utility);
 					
 					finished = true;
 				}
@@ -151,29 +152,108 @@ public class StudentAgent extends Agent{
 		int utility = 0;
 		
 		ArrayList<StudentTutorial> tempTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
-		for (int i=0; i<tempTimetable.size(); i++)
+		/*
+		for(int i=0; i<tempTimetable.size(); i++)
 		{
-			//System.out.println("line 156" + tempTimetable.get(i).getModuleName());
-			
+			System.out.println("line 157 " + tempTimetable.get(i).getModuleName() + tempTimetable.get(i).getTimeSlot());
+		}
+		*/
+		for (int i=0; i<tempTimetable.size(); i++)
+		{	
 			TimeSlot tempTS = tempTimetable.get(i).getTimeSlot();
 			
-			if(wants.contains(tempTS))
+			//wants
+			for(int j=0; j<wants.size(); j++)
 			{
-				//System.out.println("wants contains " + tempTimetable.get(i).getModuleName());
-				utility += 40;
+				if(wants.get(j).getDay().equals(tempTS.getDay()) && wants.get(j).getTime() == tempTS.getTime())
+				{
+					System.out.println("wants contains " + tempTimetable.get(i).getModuleName());
+					utility += 40;
+				}
 			}
-			else if(preferNot.contains(tempTS))
+			
+			//prefer not
+			for(int j=0; j<preferNot.size(); j++)
 			{
-				utility +=1;
+				if(preferNot.get(j).getDay().equals(tempTS.getDay()) && preferNot.get(j).getTime() == tempTS.getTime())
+				{
+					System.out.println("preferNot contains " + tempTimetable.get(i).getModuleName());
+					utility +=1;
+				}
 			}
-			else if(unable.contains(tempTS))
+			
+			//unable
+			for(int j=0; j<unable.size(); j++)
 			{
-				utility +=0;
+				if(unable.get(j).getDay().equals(tempTS.getDay()) && unable.get(j).getTime() == tempTS.getTime())
+				{
+					utility +=0;
+				}
+				else
+				{
+					int timeDiff = 0;
+					int dayDiff = 0;
+					int tempTSDay = 0;
+					int unableTempDay = 0;
+					//get unable time
+					
+					TimeSlot unableTemp = unable.get(j);
+					
+					//calculate difference in time slots between unable time and time slot
+					if(tempTS.getTime() >= unableTemp.getTime())
+					{
+						timeDiff = (tempTS.getTime() - unableTemp.getTime());
+						System.out.println("205 time Diff = " + timeDiff);
+					}
+					else
+					{
+						timeDiff = (unableTemp.getTime() - tempTS.getTime());
+						System.out.println("210 time Diff = " + timeDiff);
+					}
+					
+					//calculate day numbers
+					String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+					for(int k=0; k<days.length; k++)
+					{
+						if(days[k].equals(tempTS.getDay()))
+						{
+							tempTSDay = (k+1);
+
+							System.out.println("TempTSDay = " + k + "+" + 1 + "=" + tempTSDay);
+						}
+					}
+					
+					for(int k=0; k<days.length; k++)
+					{
+						if(days[k].equals(unableTemp.getDay()))
+						{
+							unableTempDay = (k+1);
+							System.out.println("UnableTempDay = " + k + "+" + 1 + "=" + unableTempDay);
+						}
+					}
+					
+					if(tempTSDay >= unableTempDay)
+					{
+						dayDiff = ((tempTSDay - unableTempDay)*8);
+						System.out.println("231 day Diff = " + dayDiff);
+					}
+					else
+					{
+						dayDiff = ((unableTempDay - tempTSDay)*8);
+						System.out.println("236 day Diff = " + dayDiff);
+					}
+					
+					if(timeDiff == 0)
+					{
+						utility += dayDiff;
+					}
+					else
+					{
+						utility += timeDiff + dayDiff;
+					}
+				}
 			}
-			else
-			{
-				
-			}
+
 		}
 		
 		return utility;
