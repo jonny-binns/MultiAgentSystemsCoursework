@@ -23,6 +23,7 @@ public class TimeSlot implements Concept{
 	
 	
 	@Slot (mandatory = true)
+	//@permitted values
 	public String getDay() {
 		return day;
 	}

@@ -56,7 +56,6 @@ public class TimetableAgent extends Agent{
 			e.printStackTrace();
 		}
 		
-		//doWait(30000);
 		Object[] args = getArguments();
 		if(args != null && args.length > 0)
 		{

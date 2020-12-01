@@ -14,13 +14,39 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Main {
 
 	public static void main(String[] args) {
+		
+		//get timetable
 		ArrayList<TimetableTutorial> classes = InitClasses();		
-		
 		TimetableTutorial[] classesObj = new TimetableTutorial[classes.size()];
-		
 		for(int i=0; i<classesObj.length; i++)
 		{
 			classesObj[i] = classes.get(i);
+		}
+		
+		
+		//get timeslot preferences for studentAgent
+		ArrayList<TimeSlot> preferences = new ArrayList<TimeSlot>(); 
+		TimeSlot wants = new TimeSlot();
+		wants.setDay("Monday");
+		wants.setTime(9);
+		preferences.add(wants);
+		TimeSlot[] preferencesObj= new TimeSlot[preferences.size()];
+		for(int i=0; i<preferencesObj.length; i++)
+		{
+			preferencesObj[i] = preferences.get(i);
+		}
+		
+		
+		//get timeslot preferences for studentAgent1
+		ArrayList<TimeSlot> preferences1 = new ArrayList<TimeSlot>(); 
+		TimeSlot wants1 = new TimeSlot();
+		wants1.setDay("Friday");
+		wants1.setTime(17);
+		preferences1.add(wants1);
+		TimeSlot[] preferencesObj1 = new TimeSlot[preferences1.size()];
+		for(int i=0; i<preferencesObj1.length; i++)
+		{
+			preferencesObj1[i] = preferences1.get(i);
 		}
 		
 		
@@ -32,11 +58,11 @@ public class Main {
 			AgentController rma = myContainer.createNewAgent("rma", "jade.tools.rma.rma", null);
 			rma.start();
 			
-			AgentController studentAgent = myContainer.createNewAgent("student", StudentAgent.class.getCanonicalName(), null);
+			AgentController studentAgent = myContainer.createNewAgent("student", StudentAgent.class.getCanonicalName(), preferencesObj);
 			studentAgent.start();
 			
-			//AgentController studentAgent1 = myContainer.createNewAgent("student1", StudentAgent.class.getCanonicalName(), null);
-			//studentAgent1.start();
+			AgentController studentAgent1 = myContainer.createNewAgent("student1", StudentAgent.class.getCanonicalName(), preferencesObj1);
+			studentAgent1.start();
 			
 			AgentController timetableAgent = myContainer.createNewAgent("timetable agent", TimetableAgent.class.getCanonicalName(), classesObj);
 			timetableAgent.start();
@@ -62,18 +88,16 @@ public class Main {
 		tutorial1.setTimeSlot(timeSlot1);
 		classes.add(tutorial1);
 		
-		/*
 		//class 2
 		TimetableTutorial tutorial2 = new TimetableTutorial();
 		tutorial2.setModuleName("Multi-Agent Systems");
 		tutorial2.setGroupNumber(2);
 		tutorial2.setAttendees(null);
 		TimeSlot timeSlot2 = new TimeSlot();
-		timeSlot2.setDay("Monday");
-		timeSlot2.setTime(11);
+		timeSlot2.setDay("Friday");
+		timeSlot2.setTime(17);
 		tutorial2.setTimeSlot(timeSlot2);
 		classes.add(tutorial2);
-		*/
 		
 		return classes;
 	}
