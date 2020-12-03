@@ -692,7 +692,7 @@ public class StudentAgent extends Agent{
 			ArrayList<StudentTutorial> tempTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
 			for(int i=0; i<tempTimetable.size(); i++)
 			{
-				System.out.println(getAID().getName() + " " + step + " " + tempTimetable.get(i).getModuleName() + tempTimetable.get(i).getGroupNumber() + tempTimetable.get(i).getTimeSlot().getDay() + tempTimetable.get(i).getTimeSlot().getTime());
+				System.out.println(getAID().getName() + " " + step + " " + tempTimetable.get(i).getModuleName() + tempTimetable.get(i).getGroupNumber() + tempTimetable.get(i).getTimeSlot().getDay() + tempTimetable.get(i).getTimeSlot().getTime() + utility);
 			}
 			
 		}
