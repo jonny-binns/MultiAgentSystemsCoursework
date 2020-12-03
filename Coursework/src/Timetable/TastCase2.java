@@ -10,14 +10,11 @@ import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 
-public class TestCase1 {
-/*
- * test case where both students have timeslots they are unable to attend
- * both 'wants' timeslots are the timeslots the other student has been given
- * therefore students will swap both classes
- */
-	
-	
+public class TastCase2 {
+	/*
+	 * Neither Agent wants to swap
+	 */
+
 	public static void main(String[] args) {
 		//get timetable
 		ArrayList<TimetableTutorial> classes = InitClasses();		
@@ -31,12 +28,12 @@ public class TestCase1 {
 		//get timeslot preferences for studentAgent
 		ArrayList<TimeSlot> preferences = new ArrayList<TimeSlot>(); 
 		TimeSlot wants = new TimeSlot();
-		wants.setDay("Friday");
-		wants.setTime(17);
+		wants.setDay("Monday");
+		wants.setTime(9);
 		//TimeSlot preferNot = new TimeSlot();
 		TimeSlot unable = new TimeSlot();
-		unable.setDay("Monday");
-		unable.setTime(9);
+		unable.setDay("Friday");
+		unable.setTime(17);
 		preferences.add(wants);
 		//preferences.add(preferNot);
 		preferences.add(unable);
@@ -50,12 +47,12 @@ public class TestCase1 {
 		//get timeslot preferences for studentAgent1
 		ArrayList<TimeSlot> preferences1 = new ArrayList<TimeSlot>(); 
 		TimeSlot wants1 = new TimeSlot();
-		wants1.setDay("Monday");
-		wants1.setTime(9);
+		wants1.setDay("Friday");
+		wants1.setTime(17);
 		//TimeSlot preferNot1 = new TimeSlot();
 		TimeSlot unable1 = new TimeSlot();
-		unable1.setDay("Friday");
-		unable1.setTime(17);
+		unable1.setDay("Monday");
+		unable1.setTime(9);
 		preferences1.add(wants1);
 		//preferences1.add(preferNot1);
 		preferences1.add(unable1);
@@ -117,7 +114,4 @@ public class TestCase1 {
 		
 		return classes;
 	}
-
 }
-
-

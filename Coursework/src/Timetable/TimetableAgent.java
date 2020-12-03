@@ -71,6 +71,8 @@ public class TimetableAgent extends Agent{
 			addBehaviour(new InitStudents());	
 			
 			addBehaviour(new NotifyStudents(this, 10000));
+			
+			//addBehaviour(new SwapBehaviour(this, 10000));
 						
 		}
 		else
@@ -269,4 +271,100 @@ public class TimetableAgent extends Agent{
 		}
 	}
 	
+	
+	private class SwapBehaviour extends TickerBehaviour {
+		
+		public SwapBehaviour(Agent a, long period) {
+			super(a, period);
+		}
+		
+		@Override
+		public void onTick() {
+			//gets inform message from student
+			//gets student 1
+			//gets student 2
+			//gets module name
+			//get tutorial for student 1
+			//get tutorial for student 2
+			//remove student 1 from tutorial 1
+			//add student 2 to tutorial 1
+			//add remove student 2 from tutorial 2
+			//add student 1 to tutorial 2
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+			ACLMessage msg = receive(mt);
+			if(msg != null)
+			{
+				try {
+					ContentElement ce = null;
+					//System.out.println(msg.getContent());
+				
+					//let jade convert from string to java object
+					ce = getContentManager().extractContent(msg);
+					if (ce instanceof Swap)
+					{
+						Swap swap = (Swap) ce;
+						StudentTutorial module = swap.getTutorial();
+						AID student1 = msg.getSender();
+						AID student2 = swap.getSwapStudent();
+						
+						ArrayList<TimetableTutorial> tempTimetable = (ArrayList<TimetableTutorial>) timetable.getTimetable();
+						for(int i=0; i<tempTimetable.size(); i++)
+						{
+							if(tempTimetable.get(i).getModuleName().equals(module.getModuleName()))
+							{
+								//if student 1 on list then swap in student 2
+								if(tempTimetable.get(i).getAttendees().contains(student1))
+								{
+									
+									//loop through attendees for student 1
+									ArrayList<AID> attendees = (ArrayList<AID>) tempTimetable.get(i).getAttendees();
+									for(int j=0; j<attendees.size(); j++)
+									{
+										if(attendees.get(j) == student1)
+										{
+											attendees.remove(j);
+											attendees.set(j, student2);
+											tempTimetable.get(i).setAttendees(attendees);
+											timetable.setTimetable(tempTimetable);
+										}
+									}
+								}
+								
+								//if student 2 on list then swap in student 1
+								if(tempTimetable.get(i).getAttendees().contains(student2))
+								{
+									//loop through attendees for student 2
+									ArrayList<AID> attendees = (ArrayList<AID>) tempTimetable.get(i).getAttendees();
+									for(int j=0; j<attendees.size(); j++)
+									{
+										if(attendees.get(j) == student2)
+										{
+											attendees.remove(j);
+											attendees.set(j, student1);
+											tempTimetable.get(i).setAttendees(attendees);
+											timetable.setTimetable(tempTimetable);
+										}
+									}
+								}
+							}
+						}
+					}
+					
+				} 
+				catch (CodecException | OntologyException e) {
+					e.printStackTrace();
+				}
+				
+				ArrayList<TimetableTutorial> temp = (ArrayList<TimetableTutorial>) timetable.getTimetable();
+				System.out.println(getAID().getName());
+				for(int i=0; i<temp.size(); i++)
+				{
+					System.out.println(temp.get(i).getModuleName() + " " + temp.get(i).getGroupNumber() + " " + temp.get(i).getAttendees());
+				}
+				
+			}
+		}
+	}
+	
 }
+

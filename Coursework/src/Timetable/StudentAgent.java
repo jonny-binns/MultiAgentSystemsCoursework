@@ -41,6 +41,8 @@ public class StudentAgent extends Agent{
 	int utility;
 	//list of students
 	AID[] studentList;
+	//list of timetable agents
+	AID[] timetableAgentList;
 	
 	
 
@@ -69,16 +71,24 @@ public class StudentAgent extends Agent{
 		if(args != null && args.length > 0)
 		{
 			TimeSlot[] preferences = (TimeSlot[]) args;
-			//wants.add(preferences[0]);
-			//preferNot.add(preferences[0]);
-			unable.add(preferences[0]);
+			wants.add(preferences[0]);
+			//preferNot.add(preferences[1]);
+			unable.add(preferences[1]);
 		}
 		else
 		{
 			System.out.println("No Arguements are Being passed");
 		}
-		
-		
+		/*
+		for(int i=0; i<wants.size(); i++)
+		{
+			System.out.println(getAID().getName() + "wants" + wants.get(i).getDay() + wants.get(i).getTime());		
+		}
+		for(int i=0; i<unable.size(); i++)
+		{
+			System.out.println(getAID().getName() + "unabel" + unable.get(i).getDay() + unable.get(i).getTime());		
+		}
+		*/
 		addBehaviour(new InitBehaviour());
 		doWait(40000);
 		addBehaviour(new SwapBehaviour(this, 10000));
@@ -165,12 +175,12 @@ public class StudentAgent extends Agent{
 		protected void onTick() {
 			//get list of other students
 			//code used from bookBuyerAgent from practical 02
-			DFAgentDescription template = new DFAgentDescription();
-			ServiceDescription sd = new ServiceDescription();
-			sd.setType("Student-Agent");
-			template.addServices(sd);
+			DFAgentDescription studentTemplate = new DFAgentDescription();
+			ServiceDescription studentSD = new ServiceDescription();
+			studentSD.setType("Student-Agent");
+			studentTemplate.addServices(studentSD);
 			try {
-				DFAgentDescription[] result = DFService.search(myAgent, template);
+				DFAgentDescription[] result = DFService.search(myAgent, studentTemplate);
 				studentList = new AID[(result.length-1)];
 				int j=0;
 				String agentName = getAID().getName();
@@ -181,6 +191,26 @@ public class StudentAgent extends Agent{
 						studentList[j] = result[i].getName();
 						j++;
 					}
+				}
+			}
+			catch (FIPAException fe)
+			{
+				fe.printStackTrace();
+			}
+			
+			//get list of timetable agents
+			//code used from bookBuyerAgent from practical 2
+			DFAgentDescription timetableTemplate = new DFAgentDescription();
+			ServiceDescription timetableSD = new ServiceDescription();
+			timetableSD.setType("Timetable-Agent");
+			timetableTemplate.addServices(timetableSD);
+			try {
+				DFAgentDescription[] result = DFService.search(myAgent, timetableTemplate);
+				timetableAgentList = new AID[(result.length)];
+				String agentName = getAID().getName();
+				for(int i=0; i<result.length; i++)
+				{
+					timetableAgentList[i] = result[i].getName();
 				}
 			}
 			catch (FIPAException fe)
@@ -274,8 +304,10 @@ public class StudentAgent extends Agent{
 					{
 						for(int j=0; j<unable.size(); j++)
 						{
-							if(unable.get(j).getDay().equals(timetableTemp.get(i).getTimeSlot().getDay()) && unable.get(j).getTime() == timetableTemp.get(i).getTimeSlot().getTime());
+							if(timetableTemp.get(i).getTimeSlot().getDay().equals(unable.get(j).getDay()) && timetableTemp.get(i).getTimeSlot().getTime() == unable.get(j).getTime())
 							{
+								//System.out.println(getAID().getName() + timetableTemp.get(i).getTimeSlot().getDay() + unable.get(j).getDay());
+								//System.out.println(getAID().getName() + timetableTemp.get(i).getTimeSlot().getTime() + unable.get(j).getTime());
 								//System.out.println("line 234");
 								unwantedClass = timetableTemp.get(i);
 								//unwantedClassBool = true;
@@ -360,7 +392,7 @@ public class StudentAgent extends Agent{
 							ArrayList<StudentTutorial> timetableTemp2 = (ArrayList<StudentTutorial>) timetable.getTimetable();
 							StudentTutorial outTutorial = null;
 							for(int i=0; i<timetableTemp2.size(); i++) {
-								if(timetableTemp2.get(i).getModuleName().equals(inTutorial.getModuleName()))
+								if(timetableTemp2.get(i).getModuleName().equals(inTutorial.getModuleName()) && timetableTemp2.get(i).getGroupNumber() != inTutorial.getGroupNumber())
 								{
 									outTutorial = timetableTemp2.get(i);
 								}
@@ -428,7 +460,8 @@ public class StudentAgent extends Agent{
 								if(timetableTemp2.get(i).getModuleName().equals(inTutorial.getModuleName()) && timetableTemp2.get(i).getGroupNumber() != inTutorial.getGroupNumber())
 								{
 									//make timetable with new class for utility function
-									ArrayList<StudentTutorial> replaceTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
+									//ArrayList<StudentTutorial> replaceTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
+									ArrayList<StudentTutorial> replaceTimetable = new ArrayList<>(timetable.getTimetable());
 									replaceTimetable.set(i, inTutorial);
 									//calculate utility function
 									int newUtility = CalculateUtilityFunction(wants, preferNot, unable, replaceTimetable);
@@ -439,7 +472,7 @@ public class StudentAgent extends Agent{
 										AttendsTutorial attendsTemp = new AttendsTutorial();
 										attendsTemp.setStudent(getAID());
 										attendsTemp.setTutorial(timetableTemp2.get(i));
-										
+										//attendsTemp.setTutorial(inTutorial);
 										ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
 										msg.addReceiver(inStudent);
 										msg.setLanguage(codec.getName());
@@ -459,7 +492,7 @@ public class StudentAgent extends Agent{
 										send(msg);
 									}
 								}
-								else if(timetableTemp2.get(i).getModuleName().equals(inTutorial.getModuleName()) && timetableTemp2.get(i).getGroupNumber() == inTutorial.getGroupNumber())
+								if(timetableTemp2.get(i).getModuleName().equals(inTutorial.getModuleName()) && timetableTemp2.get(i).getGroupNumber() == inTutorial.getGroupNumber())
 								{
 									ACLMessage msg = new ACLMessage(ACLMessage.REJECT_PROPOSAL);
 									msg.addReceiver(inStudent);
@@ -467,7 +500,6 @@ public class StudentAgent extends Agent{
 									msg.setOntology(ontology.getName());
 									send(msg);
 								}
-								else{}
 							}
 							
 						}
@@ -487,6 +519,7 @@ public class StudentAgent extends Agent{
 					//else reply with reject message
 			case 3:
 				//code used to deal with messages is used from practical 6
+				//System.out.println(getAID().getName() + "case 3 start");
 				if(incoming != null)
 				{
 					try { 
@@ -505,14 +538,18 @@ public class StudentAgent extends Agent{
 							ArrayList<StudentTutorial> timetableTemp2 = (ArrayList<StudentTutorial>) timetable.getTimetable();
 							for(int i=0; i<timetableTemp2.size(); i++)
 							{
+								//System.out.println(getAID().getName() + " case 3 before module name check");
+								System.out.println(getAID().getName() + timetableTemp2.get(i).getModuleName() + inTutorial.getModuleName());
+								System.out.println(getAID().getName() + timetableTemp2.get(i).getGroupNumber() + inTutorial.getGroupNumber());
 								if(timetableTemp2.get(i).getModuleName().equals(inTutorial.getModuleName()) && timetableTemp2.get(i).getGroupNumber() != inTutorial.getGroupNumber())
 								{
 									//make timetable with new class for utility function
-									ArrayList<StudentTutorial> replaceTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
+									ArrayList<StudentTutorial> replaceTimetable = new ArrayList<>(timetable.getTimetable());
 									replaceTimetable.set(i, inTutorial);
 									//calculate utility function
 									int newUtility = CalculateUtilityFunction(wants, preferNot, unable, replaceTimetable);
 									
+									//System.out.println(getAID().getName() + " case 3 before utility check");
 									if(newUtility >= utility)
 									{
 										//lets swap
@@ -531,8 +568,32 @@ public class StudentAgent extends Agent{
 										send(msg);
 										
 										//swap classes
+										//System.out.println(getAID().getName() + " case 3 swap");
 										timetable.setTimetable(replaceTimetable);
 										utility = newUtility;
+										//send swap to timetable
+										//get timetable
+										//create swap predicate
+										Swap swap = new Swap();
+										swap.setSwapStudent(inStudent);
+										swap.setTutorial(inTutorial);
+										
+										//create inform message
+										//send
+										//send query message for class
+										//code used from practical 06
+										ACLMessage timetableMSG = new ACLMessage(ACLMessage.INFORM);
+										timetableMSG.addReceiver(timetableAgentList[0]);
+										timetableMSG.setLanguage(codec.getName());
+										timetableMSG.setOntology(ontology.getName());
+										//msg.setConversationId("Swap");
+										// Let JADE convert from Java objects to string
+										getContentManager().fillContent(timetableMSG, swap);
+										send(timetableMSG);
+										//System.out.println(getAID().getName() + msg);
+										//System.out.println(getAID().getName() + "case 0 out = " + attendsTemp.getTutorial().getModuleName() + attendsTemp.getTutorial().getGroupNumber());
+
+										
 										//System.out.println("Case 3 timetable update");
 										ArrayList<StudentTutorial> tempTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
 										/*for(int j=0; j<tempTimetable.size(); j++)
@@ -565,6 +626,7 @@ public class StudentAgent extends Agent{
 					}
 				
 			}
+				//System.out.println(getAID().getName() + "case 3 finish");
 				break;
 				//case 4 receives accept_propose message
 				//change timetable
@@ -587,16 +649,16 @@ public class StudentAgent extends Agent{
 							ArrayList<StudentTutorial> timetableTemp2 = (ArrayList<StudentTutorial>) timetable.getTimetable();
 							for(int i=0; i<timetableTemp2.size(); i++)
 							{
+								//System.out.println(getAID().getName() + " case 4 before swap");
 								if(timetableTemp2.get(i).getModuleName().equals(inTutorial.getModuleName()))
 								{
 									//make timetable with new class for utility function
-									ArrayList<StudentTutorial> replaceTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
-									replaceTimetable.set(i, inTutorial);
+									timetable.getTimetable().set(i, inTutorial);
 									//swap classes
-									timetable.setTimetable(replaceTimetable);
+									//System.out.println(getAID().getName() + " case 4 swap");
 									
 									//System.out.println("Case 4 timetable update");
-									ArrayList<StudentTutorial> tempTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
+									//ArrayList<StudentTutorial> tempTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
 									/*for(int j=0; j<tempTimetable.size(); j++)
 									{
 										System.out.println(getAID().getName() + " " + tempTimetable.get(j).getModuleName() + tempTimetable.get(j).getGroupNumber() + tempTimetable.get(j).getTimeSlot().getDay() + tempTimetable.get(j).getTimeSlot().getTime());
@@ -604,9 +666,9 @@ public class StudentAgent extends Agent{
 									
 									
 									//calculate new utility function
-									int newUtility = CalculateUtilityFunction(wants, preferNot, unable, replaceTimetable);
+									int newUtility = CalculateUtilityFunction(wants, preferNot, unable, (ArrayList<StudentTutorial>)timetable.getTimetable());
 									utility = newUtility;
-									//send swap to timetable
+									
 								}
 							}
 						}
@@ -630,7 +692,7 @@ public class StudentAgent extends Agent{
 			ArrayList<StudentTutorial> tempTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
 			for(int i=0; i<tempTimetable.size(); i++)
 			{
-				System.out.println(getAID().getName() + " " + tempTimetable.get(i).getModuleName() + tempTimetable.get(i).getGroupNumber() + tempTimetable.get(i).getTimeSlot().getDay() + tempTimetable.get(i).getTimeSlot().getTime());
+				System.out.println(getAID().getName() + " " + step + " " + tempTimetable.get(i).getModuleName() + tempTimetable.get(i).getGroupNumber() + tempTimetable.get(i).getTimeSlot().getDay() + tempTimetable.get(i).getTimeSlot().getTime());
 			}
 			
 		}
