@@ -10,7 +10,7 @@ import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 
-public class TastCase2 {
+public class TestCase2 {
 	/*
 	 * Neither Agent wants to swap
 	 */

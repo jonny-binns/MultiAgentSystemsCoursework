@@ -25,7 +25,7 @@ public class TestCase3 {
 				//get timeslot preferences for studentAgent
 				ArrayList<TimeSlot> preferences = new ArrayList<TimeSlot>(); 
 				TimeSlot wants = new TimeSlot();
-				wants.setDay("Tuesday");
+				wants.setDay("Friday");
 				wants.setTime(17);
 				//TimeSlot preferNot = new TimeSlot();
 				TimeSlot unable = new TimeSlot();
@@ -115,7 +115,7 @@ public class TestCase3 {
 				tutorial3.setGroupNumber(1);
 				tutorial3.setAttendees(null);
 				TimeSlot timeSlot3 = new TimeSlot();
-				timeSlot3.setDay("Thursday");
+				timeSlot3.setDay("Monday");
 				timeSlot3.setTime(10);
 				tutorial3.setTimeSlot(timeSlot3);
 				classes.add(tutorial3);

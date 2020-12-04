@@ -79,16 +79,7 @@ public class StudentAgent extends Agent{
 		{
 			System.out.println("No Arguements are Being passed");
 		}
-		/*
-		for(int i=0; i<wants.size(); i++)
-		{
-			System.out.println(getAID().getName() + "wants" + wants.get(i).getDay() + wants.get(i).getTime());		
-		}
-		for(int i=0; i<unable.size(); i++)
-		{
-			System.out.println(getAID().getName() + "unabel" + unable.get(i).getDay() + unable.get(i).getTime());		
-		}
-		*/
+
 		addBehaviour(new InitBehaviour());
 		doWait(40000);
 		addBehaviour(new SwapBehaviour(this, 10000));
@@ -218,12 +209,7 @@ public class StudentAgent extends Agent{
 				fe.printStackTrace();
 			}
 			
-			/*
-			for(int i=0; i<studentList.length; i++)
-			{
-				System.out.println(getAID().getName() + studentList[i]);
-			}
-			*/
+
 			int step = 0;
 			//check received messages in order to decide case
 			
@@ -234,55 +220,32 @@ public class StudentAgent extends Agent{
 				if(incoming.getPerformative() == ACLMessage.QUERY_REF)
 				{
 					step = 1;
-					//System.out.println(getAID().getName() + "line 207 step = " + step);
 				}
 				//inform
 				if(incoming.getPerformative() == ACLMessage.INFORM)
 				{
 					step = 2;
-					//System.out.println(getAID().getName() + "line 213 step = " + step);
 				}
 				//propose
 				if(incoming.getPerformative() == ACLMessage.PROPOSE)
 				{
 					step = 3;
-					//System.out.println(getAID().getName() + "line 219 step = " + step);
 				}
 				//accept proposal
 				if(incoming.getPerformative() == ACLMessage.ACCEPT_PROPOSAL)
 				{
 					step = 4;
-					//System.out.println(getAID().getName() + "line 225 step = " + step);
 				}
 				//reject
 				if(incoming.getPerformative() == ACLMessage.REJECT_PROPOSAL)
 				{
 					step = 5;
-					//System.out.println(getAID().getName() + "line 231 step = " + step);
 				}
 			}
-			//System.out.println(getAID().getName() + "line 234 step = " + step);
 			
 			switch (step) {
-			//case 0 sends message asking for swap
-			//find out if class is in its unable or prefer not lists
-			//if yes send message
-			//send query message for the time where other student attends class this student cant attend
-			
-			//other person replies with inform saying what time that class is
-				//if that class time is the same as this student send reject then move on to another student
-				//else calculate utility function of the new class 
-					//if the utility function is higher/equal we want to swap, reply with propose message
-						//if other person accepts swap message timetable and request an update, also swap time in timetable
-						//else send reject move on to another student
-					//else send reject move on to another student
-			
-			case 0: //agent decides to send message to other agents asking for swap
-				//find out if class is in an unable or prefer not list
-				//System.out.println(getAID().getName() + "Started case 0");
-				//boolean unwantedClassBool = false;
-				StudentTutorial unwantedClass = null;
-				
+			case 0: 
+				//agent decides to send message to other agents asking for swap
 				//loop through timetable
 					//get class timeslot
 					//loop through unable
@@ -293,25 +256,16 @@ public class StudentAgent extends Agent{
 						//if class timeslot == prefernot timeslot
 							//get class
 							//break
-				//System.out.println(timetable.getTimetable());
 				
+				StudentTutorial unwantedClass = null;
 				ArrayList<StudentTutorial> timetableTemp = (ArrayList<StudentTutorial>) timetable.getTimetable();
-				//while(unwantedClassBool == false)
-				//{
-					//ystem.out.println(timetableTemp.size());
-					
 					for(int i=0; i<timetableTemp.size(); i++)
 					{
 						for(int j=0; j<unable.size(); j++)
 						{
 							if(timetableTemp.get(i).getTimeSlot().getDay().equals(unable.get(j).getDay()) && timetableTemp.get(i).getTimeSlot().getTime() == unable.get(j).getTime())
 							{
-								//System.out.println(getAID().getName() + timetableTemp.get(i).getTimeSlot().getDay() + unable.get(j).getDay());
-								//System.out.println(getAID().getName() + timetableTemp.get(i).getTimeSlot().getTime() + unable.get(j).getTime());
-								//System.out.println("line 234");
 								unwantedClass = timetableTemp.get(i);
-								//unwantedClassBool = true;
-								//System.out.println(unwantedClass.getModuleName() + unwantedClass.getGroupNumber());
 								for(int k=0; k<studentList.length; k++)
 								{
 									//convert to Attends for messaging
@@ -325,13 +279,10 @@ public class StudentAgent extends Agent{
 									msg.addReceiver(studentList[k]);
 									msg.setLanguage(codec.getName());
 									msg.setOntology(ontology.getName());
-									//msg.setConversationId("Swap");
 									try {
 										 // Let JADE convert from Java objects to string
 										 getContentManager().fillContent(msg, attendsTemp);
 										 send(msg);
-										 //System.out.println(getAID().getName() + msg);
-										 //System.out.println(getAID().getName() + "case 0 out = " + attendsTemp.getTutorial().getModuleName() + attendsTemp.getTutorial().getGroupNumber());
 									}
 									catch (CodecException ce) {
 										 ce.printStackTrace();
@@ -342,7 +293,7 @@ public class StudentAgent extends Agent{
 								}
 							}
 						}
-						 //change for prefer not add if else
+						 //change for prefer not add if else to check for null list
 						/*
 						for(int j=0; j<unable.size(); i++)
 						{
@@ -353,40 +304,23 @@ public class StudentAgent extends Agent{
 						}
 						*/
 					}
-					
-					
-				//}
-				//System.out.println(unwantedClass.getModuleName() + unwantedClass.getGroupNumber());
-
-				
-
-				//System.out.println(getAID().getName() + "finished case 0");
 				break;
 				
-			//case 1 receives query message
-			//receives query message
-			//replies with timeslot of that class
+
 			case 1:
-				//System.out.println(getAID().getName() + "Started case 1");
+				//case 1 receives query message
+				//receives query message
+				//replies with timeslot of that class
 				//receiving message behaviour used from SellerAgent from practical 6
-				//MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.QUERY_REF);
-				//ACLMessage msg = receive(mt);
-				//System.out.println(getAID().getName() + " line 337 " + incoming);
 				if(incoming != null)
 				{
-					//System.out.println(getAID().getName() + "line 336");
-					try { 
-						//System.out.println(getAID().getName() + "line 338");
+					try {
 						ContentElement ce = null;
-						//System.out.println(incoming.getContent());
 						ce = getContentManager().extractContent(incoming);
 						if(ce instanceof AttendsTutorial) {
 							AttendsTutorial inAttendsTutorial = (AttendsTutorial) ce;
 							StudentTutorial inTutorial = inAttendsTutorial.getTutorial();
 							AID inStudent = inAttendsTutorial.getStudent();
-							//System.out.println(getAID().getName() + "case 1 in = " + inAttendsTutorial.getTutorial().getModuleName() + inAttendsTutorial.getTutorial().getGroupNumber());
-							//System.out.println(getAID().getName() + "line 345");
-							//System.out.println(getAID().getName() + "inTutorial = " + inTutorial.getModuleName() + inTutorial.getGroupNumber());
 							
 							//get tutorial this agent attends
 							ArrayList<StudentTutorial> timetableTemp2 = (ArrayList<StudentTutorial>) timetable.getTimetable();
@@ -409,12 +343,9 @@ public class StudentAgent extends Agent{
 							msg.addReceiver(inStudent);
 							msg.setLanguage(codec.getName());
 							msg.setOntology(ontology.getName());
-							//msg.setConversationId("Swap");
 							// Let JADE convert from Java objects to string
-							//System.out.println(getAID().getName() + "case 1 out = " + attendsTemp.getTutorial().getModuleName() + attendsTemp.getTutorial().getGroupNumber());
 							getContentManager().fillContent(msg, attendsTemp);
 							send(msg);
-							//System.out.println(getAID().getName() + "line 378" + msg);
 						}
 					}
 					catch (CodecException ce) {
@@ -424,34 +355,25 @@ public class StudentAgent extends Agent{
 						oe.printStackTrace();
 					}
 				}
-				//System.out.println(getAID().getName() + "Finished case 1");
 				break;
 				
+				
+			case 2:
 				//case 2 receives inform message
 				//if that class time is the same as this student send reject then move on to another student
 				//else calculate utility function of the new class 
 					//if the utility function is higher/equal we want to swap, reply with propose message
-			
-			case 2:
-				//System.out.println(getAID().getName() + "Started case 2");
 				//receiving message behaviour used from SellerAgent from practical 6
-				//System.out.println(getAID().getName() + " line 401 " + incoming);
 				if(incoming != null)
 				{
-					try { 
-						//System.out.println(getAID().getName() + "line 338");
+					try {
 						ContentElement ce = null;
-						//System.out.println(incoming.getContent());
 						ce = getContentManager().extractContent(incoming);
-						//System.out.println("407" + ce);
 						if(ce instanceof AttendsTutorial)
 						{
 							AttendsTutorial inAttendsTutorial = (AttendsTutorial) ce;
 							StudentTutorial inTutorial = inAttendsTutorial.getTutorial();
 							AID inStudent = inAttendsTutorial.getStudent();
-							//System.out.println(getAID().getName() + "case 2 in = " + inAttendsTutorial.getTutorial().getModuleName() + inAttendsTutorial.getTutorial().getGroupNumber());
-							//System.out.println(getAID().getName() + "line 412");
-							//System.out.println(getAID().getName() + "inTutorial = " + inTutorial.getModuleName() + inTutorial.getGroupNumber());
 							
 							//check that the incoming class is not the same as the current class
 							ArrayList<StudentTutorial> timetableTemp2 = (ArrayList<StudentTutorial>) timetable.getTimetable();
@@ -460,7 +382,6 @@ public class StudentAgent extends Agent{
 								if(timetableTemp2.get(i).getModuleName().equals(inTutorial.getModuleName()) && timetableTemp2.get(i).getGroupNumber() != inTutorial.getGroupNumber())
 								{
 									//make timetable with new class for utility function
-									//ArrayList<StudentTutorial> replaceTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
 									ArrayList<StudentTutorial> replaceTimetable = new ArrayList<>(timetable.getTimetable());
 									replaceTimetable.set(i, inTutorial);
 									//calculate utility function
@@ -477,9 +398,7 @@ public class StudentAgent extends Agent{
 										msg.addReceiver(inStudent);
 										msg.setLanguage(codec.getName());
 										msg.setOntology(ontology.getName());
-										//msg.setConversationId("Swap");
 										// Let JADE convert from Java objects to string
-										//System.out.println(getAID().getName() + "case 2 out = " + attendsTemp.getTutorial().getModuleName() + attendsTemp.getTutorial().getGroupNumber());
 										getContentManager().fillContent(msg, attendsTemp);
 										send(msg);
 									}
@@ -513,32 +432,28 @@ public class StudentAgent extends Agent{
 				}
 				
 				break;
-			//case 3 receives propose message
+			
+				
+			case 3:
+				//case 3 receives propose message
 				//calculate utility function with proposed timeslot
 					//if utility funciton is higher swap, reply with accept message, change timetable
 					//else reply with reject message
-			case 3:
 				//code used to deal with messages is used from practical 6
-				//System.out.println(getAID().getName() + "case 3 start");
 				if(incoming != null)
 				{
-					try { 
-						//System.out.println(getAID().getName() + "line 338");
+					try {
 						ContentElement ce = null;
-						//System.out.println(incoming.getContent());
 						ce = getContentManager().extractContent(incoming);
-						//System.out.println("407" + ce);
 						if(ce instanceof AttendsTutorial)
 						{
 							AttendsTutorial inAttendsTutorial = (AttendsTutorial) ce;
 							StudentTutorial inTutorial = inAttendsTutorial.getTutorial();
 							AID inStudent = inAttendsTutorial.getStudent();
-							//System.out.println(getAID().getName() + "case 3 in = " + inAttendsTutorial.getTutorial().getModuleName() + inAttendsTutorial.getTutorial().getGroupNumber());
 							
 							ArrayList<StudentTutorial> timetableTemp2 = (ArrayList<StudentTutorial>) timetable.getTimetable();
 							for(int i=0; i<timetableTemp2.size(); i++)
 							{
-								//System.out.println(getAID().getName() + " case 3 before module name check");
 								System.out.println(getAID().getName() + timetableTemp2.get(i).getModuleName() + inTutorial.getModuleName());
 								System.out.println(getAID().getName() + timetableTemp2.get(i).getGroupNumber() + inTutorial.getGroupNumber());
 								if(timetableTemp2.get(i).getModuleName().equals(inTutorial.getModuleName()) && timetableTemp2.get(i).getGroupNumber() != inTutorial.getGroupNumber())
@@ -548,8 +463,7 @@ public class StudentAgent extends Agent{
 									replaceTimetable.set(i, inTutorial);
 									//calculate utility function
 									int newUtility = CalculateUtilityFunction(wants, preferNot, unable, replaceTimetable);
-									
-									//System.out.println(getAID().getName() + " case 3 before utility check");
+
 									if(newUtility >= utility)
 									{
 										//lets swap
@@ -561,14 +475,11 @@ public class StudentAgent extends Agent{
 										msg.addReceiver(inStudent);
 										msg.setLanguage(codec.getName());
 										msg.setOntology(ontology.getName());
-										//msg.setConversationId("Swap");
 										// Let JADE convert from Java objects to string
-										//System.out.println(getAID().getName() + "case 3 out = " + attendsTemp.getTutorial().getModuleName() + attendsTemp.getTutorial().getGroupNumber());
 										getContentManager().fillContent(msg, attendsTemp);
 										send(msg);
 										
 										//swap classes
-										//System.out.println(getAID().getName() + " case 3 swap");
 										timetable.setTimetable(replaceTimetable);
 										utility = newUtility;
 										//send swap to timetable
@@ -586,21 +497,9 @@ public class StudentAgent extends Agent{
 										timetableMSG.addReceiver(timetableAgentList[0]);
 										timetableMSG.setLanguage(codec.getName());
 										timetableMSG.setOntology(ontology.getName());
-										//msg.setConversationId("Swap");
 										// Let JADE convert from Java objects to string
 										getContentManager().fillContent(timetableMSG, swap);
 										send(timetableMSG);
-										//System.out.println(getAID().getName() + msg);
-										//System.out.println(getAID().getName() + "case 0 out = " + attendsTemp.getTutorial().getModuleName() + attendsTemp.getTutorial().getGroupNumber());
-
-										
-										//System.out.println("Case 3 timetable update");
-										ArrayList<StudentTutorial> tempTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
-										/*for(int j=0; j<tempTimetable.size(); j++)
-										{
-											System.out.println(getAID().getName() + " " + tempTimetable.get(j).getModuleName() + tempTimetable.get(j).getGroupNumber() + tempTimetable.get(j).getTimeSlot().getDay() + tempTimetable.get(j).getTimeSlot().getTime());
-										}*/
-										
 									}
 									else
 									{
@@ -610,7 +509,6 @@ public class StudentAgent extends Agent{
 										msg.setLanguage(codec.getName());
 										msg.setOntology(ontology.getName());
 										send(msg);
-										//step = 5;
 									}
 								}
 							}
@@ -626,45 +524,30 @@ public class StudentAgent extends Agent{
 					}
 				
 			}
-				//System.out.println(getAID().getName() + "case 3 finish");
 				break;
+
+			case 4:
 				//case 4 receives accept_propose message
 				//change timetable
-			case 4:
 				if(incoming != null)
 				{
-					try { 
-						//System.out.println(getAID().getName() + "line 338");
+					try {
 						ContentElement ce = null;
-						//System.out.println(incoming.getContent());
 						ce = getContentManager().extractContent(incoming);
-						//System.out.println("407" + ce);
 						if(ce instanceof AttendsTutorial)
 						{
 							AttendsTutorial inAttendsTutorial = (AttendsTutorial) ce;
 							StudentTutorial inTutorial = inAttendsTutorial.getTutorial();
 							AID inStudent = inAttendsTutorial.getStudent();
-							//System.out.println(getAID().getName() + "case 4 in = " + inAttendsTutorial.getTutorial().getModuleName() + inAttendsTutorial.getTutorial().getGroupNumber());
 							
 							ArrayList<StudentTutorial> timetableTemp2 = (ArrayList<StudentTutorial>) timetable.getTimetable();
 							for(int i=0; i<timetableTemp2.size(); i++)
 							{
-								//System.out.println(getAID().getName() + " case 4 before swap");
 								if(timetableTemp2.get(i).getModuleName().equals(inTutorial.getModuleName()))
 								{
 									//make timetable with new class for utility function
-									timetable.getTimetable().set(i, inTutorial);
 									//swap classes
-									//System.out.println(getAID().getName() + " case 4 swap");
-									
-									//System.out.println("Case 4 timetable update");
-									//ArrayList<StudentTutorial> tempTimetable = (ArrayList<StudentTutorial>) timetable.getTimetable();
-									/*for(int j=0; j<tempTimetable.size(); j++)
-									{
-										System.out.println(getAID().getName() + " " + tempTimetable.get(j).getModuleName() + tempTimetable.get(j).getGroupNumber() + tempTimetable.get(j).getTimeSlot().getDay() + tempTimetable.get(j).getTimeSlot().getTime());
-									}*/
-									
-									
+									timetable.getTimetable().set(i, inTutorial);
 									//calculate new utility function
 									int newUtility = CalculateUtilityFunction(wants, preferNot, unable, (ArrayList<StudentTutorial>)timetable.getTimetable());
 									utility = newUtility;
@@ -711,12 +594,6 @@ public class StudentAgent extends Agent{
 		int utility = 0;
 		
 		ArrayList<StudentTutorial> tempTimetable = timetablePar;
-		/*
-		for(int i=0; i<tempTimetable.size(); i++)
-		{
-			System.out.println("line 157 " + tempTimetable.get(i).getModuleName() + tempTimetable.get(i).getTimeSlot());
-		}
-		*/
 		for (int i=0; i<tempTimetable.size(); i++)
 		{	
 			TimeSlot tempTS = tempTimetable.get(i).getTimeSlot();
@@ -787,7 +664,6 @@ public class StudentAgent extends Agent{
 					if(tempTSDay >= unableTempDay)
 					{
 						dayDiff = ((tempTSDay - unableTempDay)*8);
-						//System.out.println("231 day Diff = " + dayDiff);
 					}
 					else
 					{

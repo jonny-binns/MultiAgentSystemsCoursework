@@ -72,7 +72,7 @@ public class TimetableAgent extends Agent{
 			
 			addBehaviour(new NotifyStudents(this, 10000));
 			
-			//addBehaviour(new SwapBehaviour(this, 10000));
+			addBehaviour(new SwapBehaviour(this, 10000));
 						
 		}
 		else
@@ -169,13 +169,6 @@ public class TimetableAgent extends Agent{
 				}
 				//updates timetable
 				timetable.setTimetable(tempTimetable);
-				/*
-				ArrayList<TimetableTutorial>tmp = (ArrayList<TimetableTutorial>) timetable.getTimetable();
-				for(int i=0; i<tmp.size(); i++)
-				{
-					System.out.println(tmp.get(i).getModuleName() + " " + tmp.get(i).getGroupNumber() + tmp.get(i).getAttendees());
-				}
-				*/
 			}
 			catch(FIPAException fe) {
 				fe.printStackTrace();
@@ -253,17 +246,6 @@ public class TimetableAgent extends Agent{
 				catch (OntologyException oe) {
 					 oe.printStackTrace();
 				} 
-				
-				/*
-				//waits for accept proposal message
-				MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
-				ACLMessage reply = receive(mt);
-				if(reply != null)
-				{
-					System.out.println("timetable received accept proposal");
-					i++;
-				}
-				*/
 			}
 			finished = true;
 
