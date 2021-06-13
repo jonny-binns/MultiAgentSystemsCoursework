@@ -1,4 +1,4 @@
-# Multi-Agent Systems courseowkr
+# Multi-Agent Systems coursework
 
 The coursework for Multi-Agent Systems, the task was to create a timetable system for a university where students would input what times they wanted and did not want classes and the agents would swap with each other to get the students a preferred timetable.
 
